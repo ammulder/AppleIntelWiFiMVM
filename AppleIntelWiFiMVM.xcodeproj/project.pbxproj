@@ -7,15 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		846A8A6A1C6CB86400888583 /* iwl-agn-hw.h in Headers */ = {isa = PBXBuildFile; fileRef = 846A8A671C6CB86400888583 /* iwl-agn-hw.h */; };
+		846A8A6E1C6CBA6300888583 /* iwl-config.h in Headers */ = {isa = PBXBuildFile; fileRef = 846A8A6D1C6CBA6300888583 /* iwl-config.h */; };
+		846A8A701C6CBB1E00888583 /* linux-porting.h in Headers */ = {isa = PBXBuildFile; fileRef = 846A8A6F1C6CBB1E00888583 /* linux-porting.h */; };
+		847F26C81C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode in Resources */ = {isa = PBXBuildFile; fileRef = 847F26C71C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode */; };
+		847F26CA1C6EA2870007A5B0 /* FirmwareLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847F26C91C6EA2870007A5B0 /* FirmwareLoader.cpp */; };
 		84C01A021C6C1F4100408046 /* AppleIntelWiFiMVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C01A011C6C1F4100408046 /* AppleIntelWiFiMVM.h */; };
 		84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C01A031C6C1F4100408046 /* AppleIntelWiFiMVM.cpp */; };
+		84E3AE731C6CF3F1004694CB /* ieee80211.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E3AE721C6CF3F1004694CB /* ieee80211.h */; };
+		84E3AE751C6CF475004694CB /* if_ether.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E3AE741C6CF475004694CB /* if_ether.h */; };
+		84EF564C1C6D903B00C97EDD /* netdev_features.h in Headers */ = {isa = PBXBuildFile; fileRef = 84EF564B1C6D903B00C97EDD /* netdev_features.h */; };
+		84EF564E1C6D943E00C97EDD /* iwl-7000.h in Headers */ = {isa = PBXBuildFile; fileRef = 84EF564D1C6D943E00C97EDD /* iwl-7000.h */; };
+		84EF56501C6D951E00C97EDD /* device-list.h in Headers */ = {isa = PBXBuildFile; fileRef = 84EF564F1C6D951E00C97EDD /* device-list.h */; };
+		84EF56521C6D95C300C97EDD /* iwl-8000.h in Headers */ = {isa = PBXBuildFile; fileRef = 84EF56511C6D95C300C97EDD /* iwl-8000.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		846A8A671C6CB86400888583 /* iwl-agn-hw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-agn-hw.h"; path = "linux/iwl-agn-hw.h"; sourceTree = "<group>"; };
+		846A8A6D1C6CBA6300888583 /* iwl-config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-config.h"; path = "linux/iwl-config.h"; sourceTree = "<group>"; };
+		846A8A6F1C6CBB1E00888583 /* linux-porting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "linux-porting.h"; path = "linux/linux-porting.h"; sourceTree = "<group>"; };
+		847F26C71C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode */ = {isa = PBXFileReference; lastKnownFileType = file; name = "iwlwifi-8000C-16.ucode"; path = "firmware/iwlwifi-8000C-16.ucode"; sourceTree = "<group>"; };
+		847F26C91C6EA2870007A5B0 /* FirmwareLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirmwareLoader.cpp; sourceTree = "<group>"; };
 		84C019FE1C6C1F4100408046 /* AppleIntelWiFiMVM.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppleIntelWiFiMVM.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C01A011C6C1F4100408046 /* AppleIntelWiFiMVM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleIntelWiFiMVM.h; sourceTree = "<group>"; };
 		84C01A031C6C1F4100408046 /* AppleIntelWiFiMVM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AppleIntelWiFiMVM.cpp; sourceTree = "<group>"; };
 		84C01A051C6C1F4100408046 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84E3AE721C6CF3F1004694CB /* ieee80211.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ieee80211.h; path = linux/ieee80211.h; sourceTree = "<group>"; };
+		84E3AE741C6CF475004694CB /* if_ether.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = if_ether.h; path = linux/if_ether.h; sourceTree = "<group>"; };
+		84EF564A1C6D8D7800C97EDD /* linux-80211.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "linux-80211.h"; path = "linux/linux-80211.h"; sourceTree = "<group>"; };
+		84EF564B1C6D903B00C97EDD /* netdev_features.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = netdev_features.h; path = linux/netdev_features.h; sourceTree = "<group>"; };
+		84EF564D1C6D943E00C97EDD /* iwl-7000.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-7000.h"; path = "linux/iwl-7000.h"; sourceTree = "<group>"; };
+		84EF564F1C6D951E00C97EDD /* device-list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "device-list.h"; path = "linux/device-list.h"; sourceTree = "<group>"; };
+		84EF56511C6D95C300C97EDD /* iwl-8000.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-8000.h"; path = "linux/iwl-8000.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +52,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		846A8A641C6CB54700888583 /* linux */ = {
+			isa = PBXGroup;
+			children = (
+				84EF56511C6D95C300C97EDD /* iwl-8000.h */,
+				84EF564F1C6D951E00C97EDD /* device-list.h */,
+				84EF564D1C6D943E00C97EDD /* iwl-7000.h */,
+				84EF564B1C6D903B00C97EDD /* netdev_features.h */,
+				84E3AE741C6CF475004694CB /* if_ether.h */,
+				84E3AE721C6CF3F1004694CB /* ieee80211.h */,
+				846A8A6F1C6CBB1E00888583 /* linux-porting.h */,
+				846A8A6D1C6CBA6300888583 /* iwl-config.h */,
+				846A8A671C6CB86400888583 /* iwl-agn-hw.h */,
+				84EF564A1C6D8D7800C97EDD /* linux-80211.h */,
+			);
+			name = linux;
+			sourceTree = "<group>";
+		};
+		847F26C61C6EA0A90007A5B0 /* Firmware */ = {
+			isa = PBXGroup;
+			children = (
+				847F26C71C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode */,
+			);
+			name = Firmware;
+			sourceTree = "<group>";
+		};
 		84C019F41C6C1F4100408046 = {
 			isa = PBXGroup;
 			children = (
@@ -48,9 +96,12 @@
 		84C01A001C6C1F4100408046 /* AppleIntelWiFiMVM */ = {
 			isa = PBXGroup;
 			children = (
+				847F26C61C6EA0A90007A5B0 /* Firmware */,
+				846A8A641C6CB54700888583 /* linux */,
 				84C01A011C6C1F4100408046 /* AppleIntelWiFiMVM.h */,
 				84C01A031C6C1F4100408046 /* AppleIntelWiFiMVM.cpp */,
 				84C01A051C6C1F4100408046 /* Info.plist */,
+				847F26C91C6EA2870007A5B0 /* FirmwareLoader.cpp */,
 			);
 			path = AppleIntelWiFiMVM;
 			sourceTree = "<group>";
@@ -62,6 +113,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84EF56501C6D951E00C97EDD /* device-list.h in Headers */,
+				84EF564E1C6D943E00C97EDD /* iwl-7000.h in Headers */,
+				84EF564C1C6D903B00C97EDD /* netdev_features.h in Headers */,
+				84E3AE751C6CF475004694CB /* if_ether.h in Headers */,
+				846A8A6E1C6CBA6300888583 /* iwl-config.h in Headers */,
+				846A8A701C6CBB1E00888583 /* linux-porting.h in Headers */,
+				84E3AE731C6CF3F1004694CB /* ieee80211.h in Headers */,
+				84EF56521C6D95C300C97EDD /* iwl-8000.h in Headers */,
+				846A8A6A1C6CB86400888583 /* iwl-agn-hw.h in Headers */,
 				84C01A021C6C1F4100408046 /* AppleIntelWiFiMVM.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -123,6 +183,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				847F26C81C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +195,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */,
+				847F26CA1C6EA2870007A5B0 /* FirmwareLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

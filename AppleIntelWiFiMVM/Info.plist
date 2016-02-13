@@ -31,7 +31,9 @@
 			<key>IOProviderClass</key>
 			<string>IOPCIDevice</string>
 			<key>IOPCIPrimaryMatch</key>
-			<string>0x095a8086</string>
+			<string>0x08b18086 0x08b28086 0x08b38086 0x08b48086 0x31658086 0x31668086 0x095a8086 0x095b8086 0x24f38086 0x24f48086 0x43a014e4</string>
+			<key>IOMatchCategory</key>
+			<string>FooBar</string>
 			<key>IOProbeScore</key>
 			<integer>1000</integer>
 		</dict>
@@ -40,6 +42,8 @@
 	<string>Copyright © 2016 Aaron Mulder. All rights reserved.</string>
 	<key>OSBundleLibraries</key>
 	<dict>
+		<key>com.apple.kpi.mach</key>
+		<string>9.0.0</string>
 		<key>com.apple.kpi.iokit</key>
 		<string>9.0.0</string>
 		<key>com.apple.kpi.libkern</key>
