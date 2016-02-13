@@ -23,15 +23,15 @@ If you're interested in helping, it would be great to have more people try test 
 Typical third-party driver kexts should be installed to /Library/Extensions, but that's not recommended for this driver yet.  Even in this initial work I've managed to craft a bug that crashed my machine when the driver loaded.  If the driver was installed system-wide, that would happen on every boot, which seems rather unfortunate.  So the manual loading process is recommended for now.
 
 #### Manual Testing
-1. Download the latest AppleIntelWiFIMVM.kext.zip (or build from source)
+1. Download the latest AppleIntelWiFiMVM.kext.zip (or build from source)
 2. Unzip if needed
 3. From Terminal, go to where the kext is and run:
 ```Shell
-chown -R root:wheel AppleIntelWiFIMVM.kext
-sudo kextload AppleIntelWiFIMVM.kext
-sudo kextunload AppleIntelWiFIMVM.kext
+chown -R root:wheel AppleIntelWiFiMVM.kext
+sudo kextload AppleIntelWiFiMVM.kext
+sudo kextunload AppleIntelWiFiMVM.kext
 ```
-4. Run Console.app and scroll to the bottom of the system log (usually displayed by default) or search it for AppleIntelWiFIMVM.  You should see output such as:
+4. Run Console.app and scroll to the bottom of the system log (usually displayed by default) or search it for AppleIntelWiFiMVM.  You should see output such as:
 ```Text
 2/12/16 11:16:51.000 PM kernel[0]: AppleIntelWiFiMVM loading for device Intel(R) Dual Band Wireless AC 7265
 2/12/16 11:16:51.000 PM kernel[0]: AppleIntelWiFiMVM LOADED firmware file iwlwifi-8000C-16.ucode
