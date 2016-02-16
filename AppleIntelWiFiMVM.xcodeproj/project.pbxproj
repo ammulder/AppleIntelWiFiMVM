@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		843096591C6FC3320020E454 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 843096571C6FC3320020E454 /* README.md */; };
+		843096601C7004920020E454 /* iwl-trans.h in Headers */ = {isa = PBXBuildFile; fileRef = 8430965F1C7004920020E454 /* iwl-trans.h */; };
+		843096631C70CE6F0020E454 /* FirmwareParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843096611C70CE6F0020E454 /* FirmwareParser.cpp */; };
+		843096641C70CE6F0020E454 /* FirmwareParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 843096621C70CE6F0020E454 /* FirmwareParser.h */; };
+		843096661C70EA6C0020E454 /* iwl-fw-error-dump.h in Headers */ = {isa = PBXBuildFile; fileRef = 843096651C70EA6C0020E454 /* iwl-fw-error-dump.h */; };
+		844145681C717D2700D92381 /* iwlwifi-3160-16.ucode in Resources */ = {isa = PBXBuildFile; fileRef = 844145641C717D2700D92381 /* iwlwifi-3160-16.ucode */; };
+		844145691C717D2700D92381 /* iwlwifi-7260-16.ucode in Resources */ = {isa = PBXBuildFile; fileRef = 844145651C717D2700D92381 /* iwlwifi-7260-16.ucode */; };
+		8441456A1C717D2700D92381 /* iwlwifi-7265-16.ucode in Resources */ = {isa = PBXBuildFile; fileRef = 844145661C717D2700D92381 /* iwlwifi-7265-16.ucode */; };
+		8441456B1C717D2700D92381 /* iwlwifi-7265D-16.ucode in Resources */ = {isa = PBXBuildFile; fileRef = 844145671C717D2700D92381 /* iwlwifi-7265D-16.ucode */; };
 		846A8A6A1C6CB86400888583 /* iwl-agn-hw.h in Headers */ = {isa = PBXBuildFile; fileRef = 846A8A671C6CB86400888583 /* iwl-agn-hw.h */; };
 		846A8A6E1C6CBA6300888583 /* iwl-config.h in Headers */ = {isa = PBXBuildFile; fileRef = 846A8A6D1C6CBA6300888583 /* iwl-config.h */; };
 		846A8A701C6CBB1E00888583 /* linux-porting.h in Headers */ = {isa = PBXBuildFile; fileRef = 846A8A6F1C6CBB1E00888583 /* linux-porting.h */; };
@@ -23,6 +32,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		843096561C6FC3320020E454 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		843096571C6FC3320020E454 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8430965E1C6FFB820020E454 /* firmware-defs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "firmware-defs.h"; path = "linux/firmware-defs.h"; sourceTree = "<group>"; };
+		8430965F1C7004920020E454 /* iwl-trans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-trans.h"; path = "linux/iwl-trans.h"; sourceTree = "<group>"; };
+		843096611C70CE6F0020E454 /* FirmwareParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirmwareParser.cpp; sourceTree = "<group>"; };
+		843096621C70CE6F0020E454 /* FirmwareParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirmwareParser.h; sourceTree = "<group>"; };
+		843096651C70EA6C0020E454 /* iwl-fw-error-dump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-fw-error-dump.h"; path = "linux/iwl-fw-error-dump.h"; sourceTree = "<group>"; };
+		844145641C717D2700D92381 /* iwlwifi-3160-16.ucode */ = {isa = PBXFileReference; lastKnownFileType = file; name = "iwlwifi-3160-16.ucode"; path = "firmware/iwlwifi-3160-16.ucode"; sourceTree = "<group>"; };
+		844145651C717D2700D92381 /* iwlwifi-7260-16.ucode */ = {isa = PBXFileReference; lastKnownFileType = file; name = "iwlwifi-7260-16.ucode"; path = "firmware/iwlwifi-7260-16.ucode"; sourceTree = "<group>"; };
+		844145661C717D2700D92381 /* iwlwifi-7265-16.ucode */ = {isa = PBXFileReference; lastKnownFileType = file; name = "iwlwifi-7265-16.ucode"; path = "firmware/iwlwifi-7265-16.ucode"; sourceTree = "<group>"; };
+		844145671C717D2700D92381 /* iwlwifi-7265D-16.ucode */ = {isa = PBXFileReference; lastKnownFileType = file; name = "iwlwifi-7265D-16.ucode"; path = "firmware/iwlwifi-7265D-16.ucode"; sourceTree = "<group>"; };
 		846A8A671C6CB86400888583 /* iwl-agn-hw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-agn-hw.h"; path = "linux/iwl-agn-hw.h"; sourceTree = "<group>"; };
 		846A8A6D1C6CBA6300888583 /* iwl-config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-config.h"; path = "linux/iwl-config.h"; sourceTree = "<group>"; };
 		846A8A6F1C6CBB1E00888583 /* linux-porting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "linux-porting.h"; path = "linux/linux-porting.h"; sourceTree = "<group>"; };
@@ -55,16 +75,19 @@
 		846A8A641C6CB54700888583 /* linux */ = {
 			isa = PBXGroup;
 			children = (
-				84EF56511C6D95C300C97EDD /* iwl-8000.h */,
+				843096651C70EA6C0020E454 /* iwl-fw-error-dump.h */,
 				84EF564F1C6D951E00C97EDD /* device-list.h */,
-				84EF564D1C6D943E00C97EDD /* iwl-7000.h */,
-				84EF564B1C6D903B00C97EDD /* netdev_features.h */,
-				84E3AE741C6CF475004694CB /* if_ether.h */,
+				8430965E1C6FFB820020E454 /* firmware-defs.h */,
 				84E3AE721C6CF3F1004694CB /* ieee80211.h */,
-				846A8A6F1C6CBB1E00888583 /* linux-porting.h */,
-				846A8A6D1C6CBA6300888583 /* iwl-config.h */,
+				84E3AE741C6CF475004694CB /* if_ether.h */,
+				84EF564D1C6D943E00C97EDD /* iwl-7000.h */,
+				84EF56511C6D95C300C97EDD /* iwl-8000.h */,
 				846A8A671C6CB86400888583 /* iwl-agn-hw.h */,
+				846A8A6D1C6CBA6300888583 /* iwl-config.h */,
+				8430965F1C7004920020E454 /* iwl-trans.h */,
 				84EF564A1C6D8D7800C97EDD /* linux-80211.h */,
+				846A8A6F1C6CBB1E00888583 /* linux-porting.h */,
+				84EF564B1C6D903B00C97EDD /* netdev_features.h */,
 			);
 			name = linux;
 			sourceTree = "<group>";
@@ -72,6 +95,10 @@
 		847F26C61C6EA0A90007A5B0 /* Firmware */ = {
 			isa = PBXGroup;
 			children = (
+				844145641C717D2700D92381 /* iwlwifi-3160-16.ucode */,
+				844145651C717D2700D92381 /* iwlwifi-7260-16.ucode */,
+				844145661C717D2700D92381 /* iwlwifi-7265-16.ucode */,
+				844145671C717D2700D92381 /* iwlwifi-7265D-16.ucode */,
 				847F26C71C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode */,
 			);
 			name = Firmware;
@@ -80,6 +107,8 @@
 		84C019F41C6C1F4100408046 = {
 			isa = PBXGroup;
 			children = (
+				843096561C6FC3320020E454 /* LICENSE */,
+				843096571C6FC3320020E454 /* README.md */,
 				84C01A001C6C1F4100408046 /* AppleIntelWiFiMVM */,
 				84C019FF1C6C1F4100408046 /* Products */,
 			);
@@ -96,12 +125,14 @@
 		84C01A001C6C1F4100408046 /* AppleIntelWiFiMVM */ = {
 			isa = PBXGroup;
 			children = (
+				84C01A051C6C1F4100408046 /* Info.plist */,
 				847F26C61C6EA0A90007A5B0 /* Firmware */,
 				846A8A641C6CB54700888583 /* linux */,
 				84C01A011C6C1F4100408046 /* AppleIntelWiFiMVM.h */,
 				84C01A031C6C1F4100408046 /* AppleIntelWiFiMVM.cpp */,
-				84C01A051C6C1F4100408046 /* Info.plist */,
 				847F26C91C6EA2870007A5B0 /* FirmwareLoader.cpp */,
+				843096621C70CE6F0020E454 /* FirmwareParser.h */,
+				843096611C70CE6F0020E454 /* FirmwareParser.cpp */,
 			);
 			path = AppleIntelWiFiMVM;
 			sourceTree = "<group>";
@@ -115,9 +146,12 @@
 			files = (
 				84EF56501C6D951E00C97EDD /* device-list.h in Headers */,
 				84EF564E1C6D943E00C97EDD /* iwl-7000.h in Headers */,
+				843096601C7004920020E454 /* iwl-trans.h in Headers */,
 				84EF564C1C6D903B00C97EDD /* netdev_features.h in Headers */,
+				843096641C70CE6F0020E454 /* FirmwareParser.h in Headers */,
 				84E3AE751C6CF475004694CB /* if_ether.h in Headers */,
 				846A8A6E1C6CBA6300888583 /* iwl-config.h in Headers */,
+				843096661C70EA6C0020E454 /* iwl-fw-error-dump.h in Headers */,
 				846A8A701C6CBB1E00888583 /* linux-porting.h in Headers */,
 				84E3AE731C6CF3F1004694CB /* ieee80211.h in Headers */,
 				84EF56521C6D95C300C97EDD /* iwl-8000.h in Headers */,
@@ -183,6 +217,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				844145681C717D2700D92381 /* iwlwifi-3160-16.ucode in Resources */,
+				8441456A1C717D2700D92381 /* iwlwifi-7265-16.ucode in Resources */,
+				844145691C717D2700D92381 /* iwlwifi-7260-16.ucode in Resources */,
+				8441456B1C717D2700D92381 /* iwlwifi-7265D-16.ucode in Resources */,
 				847F26C81C6EA19C0007A5B0 /* iwlwifi-8000C-16.ucode in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,6 +232,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				843096591C6FC3320020E454 /* README.md in Sources */,
+				843096631C70CE6F0020E454 /* FirmwareParser.cpp in Sources */,
 				84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */,
 				847F26CA1C6EA2870007A5B0 /* FirmwareLoader.cpp in Sources */,
 			);

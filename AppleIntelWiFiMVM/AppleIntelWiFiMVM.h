@@ -2,6 +2,7 @@
 #include <IOKit/pci/IOPCIDevice.h>
 #include <libkern/OSKextLib.h>
 #include "linux/device-list.h"
+#include "FirmwareParser.h"
 
 class AppleIntelWiFiMVM : public IOService {
     OSDeclareDefaultStructors(AppleIntelWiFiMVM);
@@ -16,7 +17,9 @@ public:
 private:
     // --------------- Methods ---------------
     const struct iwl_cfg *identifyWiFiCard(UInt16 device, UInt16 subdevice);
-    OSData* loadFirmwareSync(const struct iwl_cfg *device);
+    bool startFirmware(const struct iwl_cfg *device, struct iwl_trans *trans);
+    void stopFirmware();
+    OSData* loadFirmwareSync(struct iwl_drv *drv, const struct iwl_cfg *device);
     static void firmwareLoadComplete( OSKextRequestTag requestTag, OSReturn result, const void *resourceData, uint32_t resourceDataLength, void *context);
     
     // --------------- Structs ---------------
@@ -28,7 +31,9 @@ private:
     // --------------- Variables ---------------
     IOLock *firmwareLoadLock;
     IOPCIDevice *pciDevice;
-    
+    iwl_drv *driver;
+    bool firmwareLoaded = false;
+    FirmwareParser *parser;
 };
 
 #define MYNAME "AppleIntelWiFiMVM"

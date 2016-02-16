@@ -34,11 +34,25 @@ bool AppleIntelWiFiMVM::start(IOService* provider) {
     UInt16 subsystem_vendor = pciDevice->configRead16(kIOPCIConfigSubSystemVendorID);
     UInt16 subsystem_device = pciDevice->configRead16(kIOPCIConfigSubSystemID);
     UInt8 revision = pciDevice->configRead8(kIOPCIConfigRevisionID);
-    vendor = 0x8086;
-    subsystem_vendor = 0x8086;
-    device = 0x095a;
-    subsystem_device = 0x9510;
-    
+//    vendor = 0x8086;
+//    subsystem_vendor = 0x8086;
+    // Broadwell NUC 7265
+//    device = 0x095a;
+//    subsystem_device = 0x9510;
+    // Skylake NUC 8260
+//    device = 0x24F3;
+//    subsystem_device = 0x9010;
+    // 7260
+//    device = 0x08B1;
+//    subsystem_device = 0x4070;
+    // 3160
+//    device = 0x08B3;
+//    subsystem_device = 0x0070;
+    // 3165 uses 7165D firmware
+//    device = 0x3165;
+//    subsystem_device = 0x4010;
+    // 4165 uses 8260 firmware above, not retested here
+
     if(vendor != 0x8086 || subsystem_vendor != 0x8086) {
         IOLog("%s Unrecognized vendor/sub-vendor ID %#06x/%#06x; expecting 0x8086 for both; cannot load driver.\n",
               MYNAME, vendor, subsystem_vendor);
@@ -63,7 +77,11 @@ bool AppleIntelWiFiMVM::start(IOService* provider) {
     
     pciDevice->retain();
 
-    loadFirmwareSync(card);
+    IOLog("%s Starting Firmware...\n", MYNAME);
+    if(!startFirmware(card, NULL)) {// TODO: PCI transport
+        IOLog("%s Unable to start firmware\n", MYNAME);
+        return false;
+    }
     
     pciDevice->setMemoryEnable(true);
     registerService();
@@ -73,6 +91,7 @@ bool AppleIntelWiFiMVM::start(IOService* provider) {
 
 void AppleIntelWiFiMVM::stop(IOService* provider) {
     DEBUGLOG("%s::stop\n", MYNAME);
+    if(driver) stopFirmware();
     if (firmwareLoadLock)
     {
         IOLockFree(firmwareLoadLock);
@@ -84,6 +103,7 @@ void AppleIntelWiFiMVM::stop(IOService* provider) {
 void AppleIntelWiFiMVM::free() {
     DEBUGLOG("%s::free\n", MYNAME);
     RELEASE(pciDevice);
+    if(driver) IOFree(driver, sizeof(iwl_drv));
     super::free();
 }
 

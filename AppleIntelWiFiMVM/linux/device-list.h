@@ -83,6 +83,7 @@ struct wifi_card {
 };
 
 static const struct wifi_card wifi_card_ids[] = {
+    /* 7260 Series */
     {IWL_PCI_DEVICE(0x08B1, 0x4070, iwl7260_2ac_cfg)},
     {IWL_PCI_DEVICE(0x08B1, 0x4072, iwl7260_2ac_cfg)},
     {IWL_PCI_DEVICE(0x08B1, 0x4170, iwl7260_2ac_cfg)},

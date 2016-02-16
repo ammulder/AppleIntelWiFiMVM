@@ -26,9 +26,15 @@
 /******************************************************************************/
 
 #define printk(args...) IOLog(args)
-#define WARN_ON(x)
-#define WARN_ON_ONCE(x)
+#define WARN(test, message) check_warn_condition(test, message)
+#define WARN_ON(x) x
+#define WARN_ON_ONCE(x) x
 #define __rcu
+
+static bool check_warn_condition(bool test, char *message) {
+    if(test) IOLog("%s %s", "AppleIntelWiFiMVM", message);
+    return test;
+}
 
 /******************************************************************************/
 #pragma mark -
@@ -97,7 +103,8 @@
 const typeof( ((type *)0)->member ) *__mptr = (ptr);                       \
 (type *)( (char *)__mptr - offsetof(type,member) );})
 
-#define BITS_PER_LONG           LONG_BIT
+//#define BITS_PER_LONG           LONG_BIT
+#define BITS_PER_LONG           64
 #define BIT(nr)                 (1UL << (nr))
 #define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
 #define BIT_WORD(nr)            ((nr) / BITS_PER_LONG)
@@ -273,6 +280,11 @@ enum
     GFP_ATOMIC,
 };
 
+#define EIO     kIOReturnError
+#define EINVAL  kIOReturnBadArgument
+#define ERFKILL kIOReturnError
+#define ENOMEM  kIOReturnNoMemory
+
 #define __iomem volatile
 #define __devinit
 
@@ -381,6 +393,22 @@ static inline unsigned int _kc_ether_crc_le(int length, unsigned char *data)
     }
     return crc;
 }
+
+/**
+ * kmemdup - duplicate region of memory
+ *
+ * @src: memory region to duplicate
+ * @len: memory region length
+ * @gfp: GFP mask to use
+ */
+static void *kmemdup(const void *src, size_t len, int gfp) {
+    void *p;
+    p = IOMalloc(len);
+    if (p)
+        memcpy(p, src, len);
+    return p;
+}
+
 
 #define VLAN_ETH_FRAME_LEN	1518	/* Max. octets in frame sans FCS */
 

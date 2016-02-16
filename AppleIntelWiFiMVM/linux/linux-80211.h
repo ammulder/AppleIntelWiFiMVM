@@ -61,5 +61,81 @@ enum ieee80211_smps_mode {
     IEEE80211_SMPS_NUM_MODES,
 };
 
+/**
+ * struct ieee80211_cipher_scheme - cipher scheme
+ *
+ * This structure contains a cipher scheme information defining
+ * the secure packet crypto handling.
+ *
+ * @cipher: a cipher suite selector
+ * @iftype: a cipher iftype bit mask indicating an allowed cipher usage
+ * @hdr_len: a length of a security header used the cipher
+ * @pn_len: a length of a packet number in the security header
+ * @pn_off: an offset of pn from the beginning of the security header
+ * @key_idx_off: an offset of key index byte in the security header
+ * @key_idx_mask: a bit mask of key_idx bits
+ * @key_idx_shift: a bit shift needed to get key_idx
+ *     key_idx value calculation:
+ *      (sec_header_base[key_idx_off] & key_idx_mask) >> key_idx_shift
+ * @mic_len: a mic length in bytes
+ */
+struct ieee80211_cipher_scheme {
+    u32 cipher;
+    u16 iftype;
+    u8 hdr_len;
+    u8 pn_len;
+    u8 pn_off;
+    u8 key_idx_off;
+    u8 key_idx_mask;
+    u8 key_idx_shift;
+    u8 mic_len;
+};
+
+/**
+ * enum nl80211_iftype - (virtual) interface types
+ *
+ * @NL80211_IFTYPE_UNSPECIFIED: unspecified type, driver decides
+ * @NL80211_IFTYPE_ADHOC: independent BSS member
+ * @NL80211_IFTYPE_STATION: managed BSS member
+ * @NL80211_IFTYPE_AP: access point
+ * @NL80211_IFTYPE_AP_VLAN: VLAN interface for access points; VLAN interfaces
+ *      are a bit special in that they must always be tied to a pre-existing
+ *      AP type interface.
+ * @NL80211_IFTYPE_WDS: wireless distribution interface
+ * @NL80211_IFTYPE_MONITOR: monitor interface receiving all frames
+ * @NL80211_IFTYPE_MESH_POINT: mesh point
+ * @NL80211_IFTYPE_P2P_CLIENT: P2P client
+ * @NL80211_IFTYPE_P2P_GO: P2P group owner
+ * @NL80211_IFTYPE_P2P_DEVICE: P2P device interface type, this is not a netdev
+ *      and therefore can't be created in the normal ways, use the
+ *      %NL80211_CMD_START_P2P_DEVICE and %NL80211_CMD_STOP_P2P_DEVICE
+ *      commands to create and destroy one
+ * @NL80211_IF_TYPE_OCB: Outside Context of a BSS
+ *      This mode corresponds to the MIB variable dot11OCBActivated=true
+ * @NL80211_IFTYPE_MAX: highest interface type number currently defined
+ * @NUM_NL80211_IFTYPES: number of defined interface types
+ *
+ * These values are used with the %NL80211_ATTR_IFTYPE
+ * to set the type of an interface.
+ *
+ */
+enum nl80211_iftype {
+    NL80211_IFTYPE_UNSPECIFIED,
+    NL80211_IFTYPE_ADHOC,
+    NL80211_IFTYPE_STATION,
+    NL80211_IFTYPE_AP,
+    NL80211_IFTYPE_AP_VLAN,
+    NL80211_IFTYPE_WDS,
+    NL80211_IFTYPE_MONITOR,
+    NL80211_IFTYPE_MESH_POINT,
+    NL80211_IFTYPE_P2P_CLIENT,
+    NL80211_IFTYPE_P2P_GO,
+    NL80211_IFTYPE_P2P_DEVICE,
+    NL80211_IFTYPE_OCB,
+    
+    /* keep last */
+    NUM_NL80211_IFTYPES,
+    NL80211_IFTYPE_MAX = NUM_NL80211_IFTYPES - 1
+};
 
 #endif /* linux_80211_h */
