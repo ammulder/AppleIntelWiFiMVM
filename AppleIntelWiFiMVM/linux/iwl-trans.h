@@ -65,17 +65,14 @@
 #ifndef __iwl_trans_h__
 #define __iwl_trans_h__
 
-//#include <linux/ieee80211.h>
-//#include <linux/mm.h> /* for page_address */
-//#include <linux/lockdep.h>
+#include <linux/ieee80211.h>
+#include <linux/mm.h> /* for page_address */
+#include <linux/lockdep.h>
 
-//#include "iwl-debug.h"
-//#include "iwl-config.h"
-//#include "iwl-fw.h"
-//#include "iwl-op-mode.h"
-
-#include "linux-porting.h"
-#include "firmware-defs.h"
+#include "iwl-debug.h"
+#include "iwl-config.h"
+#include "iwl-fw.h"
+#include "iwl-op-mode.h"
 
 /**
  * DOC: Transport layer - what is it ?
@@ -165,7 +162,6 @@ static inline u32 iwl_cmd_id(u8 opcode, u8 groupid, u8 version)
  * This header format appears in the beginning of each command sent from the
  * driver, and each response/notification received from uCode.
  */
-#pragma pack(1)
 struct iwl_cmd_header {
 	u8 cmd;		/* Command ID:  REPLY_RXON, etc. */
 	u8 group_id;
@@ -190,7 +186,7 @@ struct iwl_cmd_header {
 	 *  15		unsolicited RX or uCode-originated notification
 	 */
 	__le16 sequence;
-} /*__packed*/;
+} __packed;
 
 /**
  * struct iwl_cmd_header_wide
@@ -207,7 +203,11 @@ struct iwl_cmd_header_wide {
 	__le16 length;
 	u8 reserved;
 	u8 version;
-};// __packed;
+} __packed;
+
+#define FH_RSCSR_FRAME_SIZE_MSK		0x00003FFF	/* bits 0-13 */
+#define FH_RSCSR_FRAME_INVALID		0x55550000
+#define FH_RSCSR_FRAME_ALIGN		0x40
 
 struct iwl_rx_packet {
 	/*
@@ -223,12 +223,7 @@ struct iwl_rx_packet {
 	__le32 len_n_flags;
 	struct iwl_cmd_header hdr;
 	u8 data[];
-} /*__packed*/;
-#pragma options align=reset
-
-#define FH_RSCSR_FRAME_SIZE_MSK		0x00003FFF	/* bits 0-13 */
-#define FH_RSCSR_FRAME_INVALID		0x55550000
-#define FH_RSCSR_FRAME_ALIGN		0x40
+} __packed;
 
 static inline u32 iwl_rx_packet_len(const struct iwl_rx_packet *pkt)
 {
@@ -277,7 +272,6 @@ enum CMD_MODE {
  * size of the largest command we send to uCode, except for commands that
  * aren't fully copied and use other TFD space.
  */
-#pragma pack(1)
 struct iwl_device_cmd {
 	union {
 		struct {
@@ -291,8 +285,7 @@ struct iwl_device_cmd {
 					sizeof(struct iwl_cmd_header)];
 		};
 	};
-} /*__packed*/;
-#pragma options align=reset
+} __packed;
 
 #define TFD_MAX_PAYLOAD_SIZE (sizeof(struct iwl_device_cmd))
 
@@ -720,10 +713,10 @@ struct iwl_trans {
 
 	u64 dflt_pwr_limit;
 
-//	const struct iwl_fw_dbg_dest_tlv *dbg_dest_tlv;
-//	const struct iwl_fw_dbg_conf_tlv *dbg_conf_tlv[FW_DBG_CONF_MAX];
-//	struct iwl_fw_dbg_trigger_tlv * const *dbg_trigger_tlv;
-//	u8 dbg_dest_reg_num;
+	const struct iwl_fw_dbg_dest_tlv *dbg_dest_tlv;
+	const struct iwl_fw_dbg_conf_tlv *dbg_conf_tlv[FW_DBG_CONF_MAX];
+	struct iwl_fw_dbg_trigger_tlv * const *dbg_trigger_tlv;
+	u8 dbg_dest_reg_num;
 
 	/*
 	 * Paging parameters - All of the parameters should be set by the
@@ -739,9 +732,7 @@ struct iwl_trans {
 
 	/* pointer to trans specific struct */
 	/*Ensure that this pointer will always be aligned to sizeof pointer */
-#pragma pack(8)
-    char trans_specific[0];// __aligned(sizeof(void *));
-#pragma options align=reset
+	char trans_specific[0] __aligned(sizeof(void *));
 };
 
 static inline void iwl_trans_configure(struct iwl_trans *trans,
@@ -893,16 +884,13 @@ static inline int iwl_trans_send_cmd(struct iwl_trans *trans,
 		return -EIO;
 	}
 
-#ifdef CONFIG_LOCKDEP
 	if (!(cmd->flags & CMD_ASYNC))
 		lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
-#endif
+
 	ret = trans->ops->send_cmd(trans, cmd);
 
-#ifdef CONFIG_LOCKDEP
 	if (!(cmd->flags & CMD_ASYNC))
 		lock_map_release(&trans->sync_cmd_lockdep_map);
-#endif
 
 	return ret;
 }
@@ -1101,11 +1089,11 @@ iwl_trans_set_bits_mask(struct iwl_trans *trans, u32 reg, u32 mask, u32 value)
 	__cond_lock(nic_access,				\
 		    likely((trans)->ops->grab_nic_access(trans, silent, flags)))
 
-static inline void /*__releases(nic_access)*/
+static inline void __releases(nic_access)
 iwl_trans_release_nic_access(struct iwl_trans *trans, unsigned long *flags)
 {
 	trans->ops->release_nic_access(trans, flags);
-	//__release(nic_access);
+	__release(nic_access);
 }
 
 static inline void iwl_trans_fw_error(struct iwl_trans *trans)
@@ -1131,7 +1119,7 @@ void iwl_trans_free(struct iwl_trans *trans);
 /*****************************************************
 * driver (transport) register/unregister functions
 ******************************************************/
-int /*__must_check*/ iwl_pci_register_driver(void);
+int __must_check iwl_pci_register_driver(void);
 void iwl_pci_unregister_driver(void);
 
 #endif /* __iwl_trans_h__ */

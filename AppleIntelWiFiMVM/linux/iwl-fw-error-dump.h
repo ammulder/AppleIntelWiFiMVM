@@ -65,10 +65,9 @@
 #ifndef __fw_error_dump_h__
 #define __fw_error_dump_h__
 
-//#include <linux/types.h>
+#include <linux/types.h>
 
 #define IWL_FW_ERROR_DUMP_BARKER	0x14789632
-#define FW_VER_HUMAN_READABLE_SZ	64
 
 /**
  * enum iwl_fw_error_dump_type - types of data in the dump file
@@ -114,13 +113,11 @@ enum iwl_fw_error_dump_type {
  * @len: the length starting from %data
  * @data: the data itself
  */
-#pragma pack(1)
 struct iwl_fw_error_dump_data {
 	__le32 type;
 	__le32 len;
 	__u8 data[];
-};//__packed;
-#pragma options align=reset
+} __packed;
 
 /**
  * struct iwl_fw_error_dump_file - the layout of the header of the file
@@ -128,13 +125,11 @@ struct iwl_fw_error_dump_data {
  * @file_len: the length of all the file starting from %barker
  * @data: array of %struct iwl_fw_error_dump_data
  */
-#pragma pack(1)
 struct iwl_fw_error_dump_file {
 	__le32 barker;
 	__le32 file_len;
 	u8 data[0];
-};//__packed;
-#pragma options align=reset
+} __packed;
 
 /**
  * struct iwl_fw_error_dump_txcmd - TX command data
@@ -142,14 +137,11 @@ struct iwl_fw_error_dump_file {
  * @caplen: captured length of command (may be less)
  * @data: captured command data, @caplen bytes
  */
-#pragma pack(1)
 struct iwl_fw_error_dump_txcmd {
 	__le32 cmdlen;
 	__le32 caplen;
 	u8 data[];
-};//__packed;
-#pragma options align=reset
-
+} __packed;
 
 /**
  * struct iwl_fw_error_dump_fifo - RX/TX FIFO data
@@ -162,7 +154,6 @@ struct iwl_fw_error_dump_txcmd {
  *	0=follow RD pointer ; 1 = freeze
  * @data: all of the FIFO's data
  */
-#pragma pack(1)
 struct iwl_fw_error_dump_fifo {
 	__le32 fifo_num;
 	__le32 available_bytes;
@@ -171,9 +162,7 @@ struct iwl_fw_error_dump_fifo {
 	__le32 fence_ptr;
 	__le32 fence_mode;
 	u8 data[];
-};//__packed;
-#pragma options align=reset
-
+} __packed;
 
 enum iwl_fw_error_dump_family {
 	IWL_FW_ERROR_DUMP_FAMILY_7 = 7,
@@ -188,16 +177,13 @@ enum iwl_fw_error_dump_family {
  * @dev_human_readable: name of the device
  * @bus_human_readable: name of the bus used
  */
-#pragma pack(1)
 struct iwl_fw_error_dump_info {
 	__le32 device_family;
 	__le32 hw_step;
 	u8 fw_human_readable[FW_VER_HUMAN_READABLE_SZ];
 	u8 dev_human_readable[64];
 	u8 bus_human_readable[8];
-};//__packed;
-#pragma options align=reset
-
+} __packed;
 
 /**
  * struct iwl_fw_error_dump_fw_mon - FW monitor data
@@ -207,16 +193,13 @@ struct iwl_fw_error_dump_info {
  * @reserved: for future use
  * @data: captured data
  */
-#pragma pack(1)
 struct iwl_fw_error_dump_fw_mon {
 	__le32 fw_mon_wr_ptr;
 	__le32 fw_mon_base_ptr;
 	__le32 fw_mon_cycle_cnt;
 	__le32 reserved[3];
 	u8 data[];
-};//__packed;
-#pragma options align=reset
-
+} __packed;
 
 /**
  * struct iwl_fw_error_dump_prph - periphery registers data
@@ -280,7 +263,7 @@ struct iwl_fw_error_dump_paging {
 static inline struct iwl_fw_error_dump_data *
 iwl_fw_error_next_data(struct iwl_fw_error_dump_data *data)
 {
-	return (struct iwl_fw_error_dump_data *)(data->data + le32_to_cpu(data->len));
+	return (void *)(data->data + le32_to_cpu(data->len));
 }
 
 /**
