@@ -63,9 +63,8 @@
  *
  *****************************************************************************/
 
-#ifndef _INTEL_IWL_8000_H
-#define _INTEL_IWL_8000_H
-
+#include <linux/module.h>
+#include <linux/stringify.h>
 #include "iwl-config.h"
 #include "iwl-agn-hw.h"
 
@@ -227,5 +226,4 @@ const struct iwl_cfg iwl4165_2ac_sdio_cfg = {
 	.max_vht_ampdu_exponent = MAX_VHT_AMPDU_EXPONENT_8260_SDIO,
 };
 
-//MODULE_FIRMWARE(IWL8000_MODULE_FIRMWARE(IWL8000_UCODE_API_OK));
-#endif
+MODULE_FIRMWARE(IWL8000_MODULE_FIRMWARE(IWL8000_UCODE_API_OK));
