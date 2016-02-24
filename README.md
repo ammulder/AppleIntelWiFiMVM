@@ -13,9 +13,13 @@ The following Intel WiFi cards/chips are supported:
 * NUC on-board wireless for NUC 6i\*SY\*
 
 ## Driver Status
-This driver is still in the "can it be done?" stage.  As of this writing the driver recognizes the appropriate hardware and loads a matching firmware file, but does not yet send the firmware to the hardware.
+This driver is still in the "can it be done?" stage.
 
-Long story short, __it does not yet actually connect to wireless networks__.
+As of this writing the driver recognizes the appropriate hardware and loads a matching firmware file, but does not yet send the firmware to the hardware.
+
+Now I'm in the process of trying to get all the Linux driver code to build on Mac OS X.  This will be a very long process.  Work is happening on the "Porting" branch, but it will probably be a long time before all the source even compiles again.
+
+Long story short, __this driver does not yet actually connect to wireless networks__.
 
 If you're interested in helping, it would be great to have more people try test builds just to ensure it accurately identifies all the hardware I don't have on hand to try.
 
