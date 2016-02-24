@@ -15,6 +15,7 @@
 #ifndef MAC80211_H
 #define MAC80211_H
 
+#if DISABLED_CODE
 #include <linux/bug.h>
 #include <linux/kernel.h>
 #include <linux/if_ether.h>
@@ -22,6 +23,12 @@
 #include <linux/ieee80211.h>
 #include <net/cfg80211.h>
 #include <asm/unaligned.h>
+#endif
+#include "linux-porting.h"
+#include "if_ether.h"
+#include "ieee80211.h"
+#include "cfg80211.h"
+
 
 /**
  * DOC: Introduction

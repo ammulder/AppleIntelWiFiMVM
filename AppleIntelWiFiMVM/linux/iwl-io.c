@@ -25,9 +25,12 @@
  * Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-6497
  *
  *****************************************************************************/
+#if DISABLED_CODE
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/export.h>
+#endif
+#include "linux-porting.h"
 
 #include "iwl-drv.h"
 #include "iwl-io.h"

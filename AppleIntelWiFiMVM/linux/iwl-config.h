@@ -63,9 +63,13 @@
 #ifndef __IWL_CONFIG_H__
 #define __IWL_CONFIG_H__
 
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <net/mac80211.h>
-
+#endif
+#include "linux-porting.h"
+#include "mac80211.h"
+#include "netdev_features.h"
 
 enum iwl_device_family {
 	IWL_DEVICE_FAMILY_UNDEFINED,

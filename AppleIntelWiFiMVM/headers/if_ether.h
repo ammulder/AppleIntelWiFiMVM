@@ -21,7 +21,10 @@
 #ifndef _UAPI_LINUX_IF_ETHER_H
 #define _UAPI_LINUX_IF_ETHER_H
 
+#if DISABLED_CODE
 #include <linux/types.h>
+#endif
+#include "linux-porting.h"
 
 /*
  *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble

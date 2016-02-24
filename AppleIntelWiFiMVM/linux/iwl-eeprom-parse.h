@@ -64,8 +64,12 @@
 #ifndef __iwl_eeprom_parse_h__
 #define __iwl_eeprom_parse_h__
 
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/if_ether.h>
+#endif
+#include "linux-porting.h"
+#include "if_ether.h"
 #include "iwl-trans.h"
 
 struct iwl_nvm_data {

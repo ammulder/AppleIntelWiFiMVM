@@ -12,6 +12,7 @@
  * published by the Free Software Foundation.
  */
 
+#if DISABLED_CODE
 #include <linux/netdevice.h>
 #include <linux/debugfs.h>
 #include <linux/list.h>
@@ -23,6 +24,12 @@
 #include <linux/ieee80211.h>
 #include <linux/net.h>
 #include <net/regulatory.h>
+#endif
+#include "linux-porting.h"
+#include "nl80211.h"
+#include "if_ether.h"
+#include "ieee80211.h"
+#include "ethtool.h"
 
 /**
  * DOC: Introduction
@@ -519,7 +526,7 @@ ieee80211_chandef_rate_flags(struct cfg80211_chan_def *chandef)
 	default:
 		break;
 	}
-	return 0;
+	return (ieee80211_rate_flags)0;
 }
 
 /**

@@ -16,10 +16,14 @@
 #ifndef LINUX_IEEE80211_H
 #define LINUX_IEEE80211_H
 
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/if_ether.h>
 #include <asm/byteorder.h>
 #include <asm/unaligned.h>
+#endif
+#include "linux-porting.h"
+#include "if_ether.h"
 
 /*
  * DS bit usage

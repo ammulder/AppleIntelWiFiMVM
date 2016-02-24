@@ -65,10 +65,13 @@
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+#if DISABLED_CODE
 #include <linux/module.h>
 #include <linux/pci.h>
 #include <linux/pci-aspm.h>
 #include <linux/acpi.h>
+#endif
+#include "linux-porting.h"
 
 #include "iwl-trans.h"
 #include "iwl-drv.h"
@@ -471,7 +474,9 @@ static const struct pci_device_id iwl_hw_card_ids[] = {
 
 	{0}
 };
+#if DISABLED_CODE
 MODULE_DEVICE_TABLE(pci, iwl_hw_card_ids);
+#endif
 
 #ifdef CONFIG_ACPI
 #define SPL_METHOD		"SPLC"

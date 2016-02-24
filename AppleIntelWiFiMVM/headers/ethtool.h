@@ -13,8 +13,12 @@
 #ifndef _UAPI_LINUX_ETHTOOL_H
 #define _UAPI_LINUX_ETHTOOL_H
 
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/if_ether.h>
+#endif
+#include "linux-porting.h"
+#include "if_ether.h"
 
 /* All structures exposed to userland should be defined such that they
  * have the same layout for 32-bit and 64-bit userland.

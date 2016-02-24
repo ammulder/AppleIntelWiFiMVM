@@ -29,7 +29,7 @@
 #define __attribute_const__     __attribute__((__const__))
 #define __maybe_unused          __attribute__((unused))
 #define __bitwise__             __attribute__((bitwise))
-#define __force                 __attribute__((force))
+#define __force                 //__attribute__((force))              DOESN'T CURRENTLY WORK
 #define __must_check            __attribute__((warn_unused_result))
 #define __acquires(x)           __attribute__((context(x,0,1)))
 #define __releases(x)           __attribute__((context(x,1,0)))

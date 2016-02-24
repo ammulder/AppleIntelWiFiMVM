@@ -25,9 +25,15 @@
  *****************************************************************************/
 
 #ifndef __IWLWIFI_DEVICE_TRACE
+#if DISABLED_CODE
 #include <linux/skbuff.h>
 #include <linux/ieee80211.h>
 #include <net/cfg80211.h>
+#endif
+#include "linux-porting.h"
+#include "ieee80211.h"
+#include "cfg80211.h"
+#include "mac80211.h"
 #include "iwl-trans.h"
 #if !defined(__IWLWIFI_DEVICE_TRACE)
 static inline bool iwl_trace_data(struct sk_buff *skb)

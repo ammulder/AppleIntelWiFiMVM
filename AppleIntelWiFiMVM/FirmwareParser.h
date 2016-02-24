@@ -13,9 +13,9 @@
 #include <IOKit/IOService.h>
 //#include <IOKit/pci/IOPCIDevice.h>
 //#include <libkern/OSKextLib.h>
-#include "firmware-defs.h"
 #include "iwl-config.h"
 #include "iwl-agn-hw.h"
+#include "iwl-fw.h"
 
 
 class FirmwareParser : public OSObject {

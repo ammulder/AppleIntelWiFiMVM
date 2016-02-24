@@ -1,7 +1,6 @@
 #include <IOKit/IOLib.h>
 #include <IOKit/pci/IOPCIDevice.h>
 #include <libkern/OSKextLib.h>
-#include "linux/device-list.h"
 #include "FirmwareParser.h"
 
 class AppleIntelWiFiMVM : public IOService {

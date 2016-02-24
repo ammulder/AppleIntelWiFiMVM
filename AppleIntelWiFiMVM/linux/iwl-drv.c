@@ -62,11 +62,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
+#if DISABLED_CODE
 #include <linux/completion.h>
 #include <linux/dma-mapping.h>
 #include <linux/firmware.h>
 #include <linux/module.h>
 #include <linux/vmalloc.h>
+#endif
+#include "linux-porting.h"
 
 #include "iwl-drv.h"
 #include "iwl-csr.h"
@@ -84,10 +87,12 @@
  *
  ******************************************************************************/
 
+#if DISABLED_CODE
 #define DRV_DESCRIPTION	"Intel(R) Wireless WiFi driver for Linux"
 MODULE_DESCRIPTION(DRV_DESCRIPTION);
 MODULE_AUTHOR(DRV_COPYRIGHT " " DRV_AUTHOR);
 MODULE_LICENSE("GPL");
+#endif
 
 #ifdef CONFIG_IWLWIFI_DEBUGFS
 static struct dentry *iwl_dbgfs_root;
@@ -137,7 +142,7 @@ static struct iwlwifi_opmode_table {
 	const char *name;			/* name: iwldvm, iwlmvm, etc */
 	const struct iwl_op_mode_ops *ops;	/* pointer to op_mode ops */
 	struct list_head drv;		/* list of devices using this op_mode */
-} iwlwifi_opmode_table[] = {		/* ops set when driver is initialized */
+} iwlwifi_opmode_table[2] = {		/* ops set when driver is initialized */
 	[DVM_OP_MODE] = { .name = "iwldvm", .ops = NULL },
 	[MVM_OP_MODE] = { .name = "iwlmvm", .ops = NULL },
 };

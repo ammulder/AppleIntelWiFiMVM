@@ -1,8 +1,8 @@
 #include "AppleIntelWiFiMVM.h"
-extern "C" {
-#include "linux/linux-porting.h"
-#include "linux/device-list.h"
-}
+//extern "C" {
+//#include "linux/linux-porting.h"
+//#include "linux/device-list.h"
+//}
 
 #define super IOService
 OSDefineMetaClassAndStructors(AppleIntelWiFiMVM, IOService);

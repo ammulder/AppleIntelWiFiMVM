@@ -59,9 +59,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/slab.h>
 #include <linux/export.h>
+#endif
+#include "linux-porting.h"
 
 #include "iwl-drv.h"
 #include "iwl-debug.h"

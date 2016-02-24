@@ -21,8 +21,11 @@
 #ifndef _UAPI_LINUX_IN6_H
 #define _UAPI_LINUX_IN6_H
 
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/libc-compat.h>
+#endif
+#include "linux-porting.h"
 
 /*
  *	IPv6 address structure

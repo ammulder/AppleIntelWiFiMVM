@@ -10,7 +10,10 @@
 #ifndef _LINUX_NETDEV_FEATURES_H
 #define _LINUX_NETDEV_FEATURES_H
 
+#if DISABLED_CODE
 #include <linux/types.h>
+#endif
+#include "linux-porting.h"
 
 typedef u64 netdev_features_t;
 

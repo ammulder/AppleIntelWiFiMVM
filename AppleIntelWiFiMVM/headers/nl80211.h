@@ -39,7 +39,10 @@
  * Nonetheless, semantics should also be documented carefully in this file.
  */
 
+#if DISABLED_CODE
 #include <linux/types.h>
+#endif
+#include "linux-porting.h"
 
 #define NL80211_GENL_NAME "nl80211"
 

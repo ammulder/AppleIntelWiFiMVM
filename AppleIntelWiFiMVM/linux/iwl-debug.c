@@ -61,9 +61,12 @@
  *
  *****************************************************************************/
 
+#if DISABLED_CODE
 #include <linux/device.h>
 #include <linux/interrupt.h>
 #include <linux/export.h>
+#endif
+#include "linux-porting.h"
 #include "iwl-drv.h"
 #include "iwl-debug.h"
 #include "iwl-devtrace.h"
