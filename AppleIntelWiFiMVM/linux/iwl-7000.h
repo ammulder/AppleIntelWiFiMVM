@@ -63,8 +63,14 @@
  *
  *****************************************************************************/
 
+#ifndef __IWL_7000_H
+#define __IWL_7000_H
+
+#if DISABLED_CODE
 #include <linux/module.h>
 #include <linux/stringify.h>
+#endif
+#include "linux-porting.h"
 #include "iwl-config.h"
 #include "iwl-agn-hw.h"
 
@@ -361,7 +367,11 @@ const struct iwl_cfg iwl7265d_n_cfg = {
 	.dccm_len = IWL7265_DCCM_LEN,
 };
 
+#if DISABLED_CODE
 MODULE_FIRMWARE(IWL7260_MODULE_FIRMWARE(IWL7260_UCODE_API_OK));
 MODULE_FIRMWARE(IWL3160_MODULE_FIRMWARE(IWL7260_UCODE_API_OK));
 MODULE_FIRMWARE(IWL7265_MODULE_FIRMWARE(IWL7265_UCODE_API_OK));
 MODULE_FIRMWARE(IWL7265D_MODULE_FIRMWARE(IWL7265D_UCODE_API_OK));
+#endif
+
+#endif // IWL_7000_h

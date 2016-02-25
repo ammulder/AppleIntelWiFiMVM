@@ -49,6 +49,7 @@
 		A2FCD40F9F8AF56FF05C4D40 /* trans.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA8650BCC9893C2E6B7F /* trans.c */; };
 		A2FCD43C85DA4AB2C4C0D504 /* fw-api-scan.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD9973473337F7C0F9EF5 /* fw-api-scan.h */; };
 		A2FCD4445F8212EA468C1A9A /* tt.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDB002FB53BF07452C4FE /* tt.c */; };
+		A2FCD4791EA99F30BA3AC597 /* device-list.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD600B7A833DC0D95A3B4 /* device-list.h */; };
 		A2FCD4843684CF4C6B5DFBA4 /* iwl-drv.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDD8FF038D8B163A0E74D /* iwl-drv.h */; };
 		A2FCD4AC6A25585592B2C8CC /* iwl-debug.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD41DBDA1CF8B53404881 /* iwl-debug.h */; };
 		A2FCD4BA05D4743C04D53562 /* fw-api-mac.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD078C9946464EE42C2A7 /* fw-api-mac.h */; };
@@ -112,6 +113,7 @@
 		A2FCDF0427638ECA64FAC34C /* iwl-trans.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD6A1DFE667C210CF826C /* iwl-trans.c */; };
 		A2FCDF09B6049C00BD7EB669 /* nl80211.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD7E08F44EBD5A932F3E0 /* nl80211.h */; };
 		A2FCDF0DF28EDB54320A9501 /* fw-api-d3.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDBDE638F98ECDB4809A6 /* fw-api-d3.h */; };
+		A2FCDF2243E963F4E37CBB0E /* linux-other.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD888CD13F271AD77635B /* linux-other.h */; };
 		A2FCDF3F9259DAF02AE58076 /* ieee80211.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDD73A9454809B588E518 /* ieee80211.h */; };
 		A2FCDF55C10DDEA344E7C5F6 /* coex_legacy.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD4380D45DAB2CE8CF9C9 /* coex_legacy.c */; };
 		A2FCDFA09982465339F2A512 /* iwl-eeprom-parse.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD72C024F472CC18D04BD /* iwl-eeprom-parse.h */; };
@@ -175,6 +177,7 @@
 		A2FCD590F4C36FBECFDB476D /* linux-config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "linux-config.h"; sourceTree = "<group>"; };
 		A2FCD5B482FEB265263A31C2 /* sf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sf.c; sourceTree = "<group>"; };
 		A2FCD5B4BAFD3AF0F8D75674 /* fw-api-power.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fw-api-power.h"; sourceTree = "<group>"; };
+		A2FCD600B7A833DC0D95A3B4 /* device-list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "device-list.h"; sourceTree = "<group>"; };
 		A2FCD61986A4D5102B75C6AE /* iwl-phy-db.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "iwl-phy-db.c"; path = "linux/iwl-phy-db.c"; sourceTree = "<group>"; };
 		A2FCD6213C22A0726A91C49A /* drv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = drv.c; sourceTree = "<group>"; };
 		A2FCD649AB1A8338CEC789EC /* iwl-eeprom-read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "iwl-eeprom-read.c"; path = "linux/iwl-eeprom-read.c"; sourceTree = "<group>"; };
@@ -197,6 +200,7 @@
 		A2FCD7BC967256010BF17E48 /* iwl-io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iwl-io.h"; path = "linux/iwl-io.h"; sourceTree = "<group>"; };
 		A2FCD7BF6B87FBAAC83D6DBC /* fw-api-stats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fw-api-stats.h"; sourceTree = "<group>"; };
 		A2FCD7E08F44EBD5A932F3E0 /* nl80211.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nl80211.h; sourceTree = "<group>"; };
+		A2FCD888CD13F271AD77635B /* linux-other.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "linux-other.h"; sourceTree = "<group>"; };
 		A2FCD8952F1CF26AC13E164A /* nvm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nvm.c; sourceTree = "<group>"; };
 		A2FCD89B8A9FABF93F360FD7 /* if_ether.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = if_ether.h; sourceTree = "<group>"; };
 		A2FCD8CDDDF2EF198B46E342 /* errno-base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "errno-base.h"; sourceTree = "<group>"; };
@@ -360,6 +364,7 @@
 				A2FCDD73A9454809B588E518 /* ieee80211.h */,
 				A2FCD8CDDDF2EF198B46E342 /* errno-base.h */,
 				A2FCD6B388512AD2064DBD4D /* netdev_features.h */,
+				A2FCD888CD13F271AD77635B /* linux-other.h */,
 			);
 			path = headers;
 			sourceTree = "<group>";
@@ -372,6 +377,7 @@
 				A2FCD6213C22A0726A91C49A /* drv.c */,
 				A2FCDA8650BCC9893C2E6B7F /* trans.c */,
 				A2FCDCD49E47017EB368BBE0 /* internal.h */,
+				A2FCD600B7A833DC0D95A3B4 /* device-list.h */,
 			);
 			name = pcie;
 			path = linux/pcie;
@@ -503,6 +509,8 @@
 				A2FCDF3F9259DAF02AE58076 /* ieee80211.h in Headers */,
 				A2FCD294E384FEF6AE84B1FA /* errno-base.h in Headers */,
 				A2FCD30B68B35F2206580FA4 /* netdev_features.h in Headers */,
+				A2FCD4791EA99F30BA3AC597 /* device-list.h in Headers */,
+				A2FCDF2243E963F4E37CBB0E /* linux-other.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

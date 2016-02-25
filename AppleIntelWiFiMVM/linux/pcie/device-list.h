@@ -63,21 +63,15 @@
  *
  *****************************************************************************/
 
-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+// ====== Split out from drv.c for convenience of including elsewhere
+#ifndef __IWL_DEVICE_LIST_H
+#define __IWL_DEVICE_LIST_H
 
-#if DISABLED_CODE
-#include <linux/module.h>
-#include <linux/pci.h>
-#include <linux/pci-aspm.h>
-#include <linux/acpi.h>
-#endif
-#include "linux-porting.h"
+#import "linux-porting.h"
+#import "linux-other.h"
+#import "iwl-7000.h"
+#import "iwl-8000.h"
 
-#include "iwl-trans.h"
-#include "iwl-drv.h"
-#include "internal.h"
-
-#if DISABLED_CODE
 #define IWL_PCI_DEVICE(dev, subdev, cfg) \
 	.vendor = PCI_VENDOR_ID_INTEL,  .device = (dev), \
 	.subvendor = PCI_ANY_ID, .subdevice = (subdev), \
@@ -86,7 +80,7 @@
 /* Hardware specific file defines the PCI IDs table for that hardware module */
 static const struct pci_device_id iwl_hw_card_ids[] = {
 #if IS_ENABLED(CONFIG_IWLDVM)
-	{IWL_PCI_DEVICE(0x4232, 0x1201, iwl5100_agn_cfg)}, /* Mini Card */
+{IWL_PCI_DEVICE(0x4232, 0x1201, iwl5100_agn_cfg)}, /* Mini Card */
 	{IWL_PCI_DEVICE(0x4232, 0x1301, iwl5100_agn_cfg)}, /* Half Mini Card */
 	{IWL_PCI_DEVICE(0x4232, 0x1204, iwl5100_agn_cfg)}, /* Mini Card */
 	{IWL_PCI_DEVICE(0x4232, 0x1304, iwl5100_agn_cfg)}, /* Half Mini Card */
@@ -473,235 +467,7 @@ static const struct pci_device_id iwl_hw_card_ids[] = {
 	{IWL_PCI_DEVICE(0x24F3, 0x0930, iwl8260_2ac_cfg)},
 #endif /* CONFIG_IWLMVM */
 
-	{0}
-};
-MODULE_DEVICE_TABLE(pci, iwl_hw_card_ids);
-#endif
-
-#ifdef CONFIG_ACPI
-#define SPL_METHOD		"SPLC"
-#define SPL_DOMAINTYPE_MODULE	BIT(0)
-#define SPL_DOMAINTYPE_WIFI	BIT(1)
-#define SPL_DOMAINTYPE_WIGIG	BIT(2)
-#define SPL_DOMAINTYPE_RFEM	BIT(3)
-
-static u64 splx_get_pwr_limit(struct iwl_trans *trans, union acpi_object *splx)
-{
-	union acpi_object *limits, *domain_type, *power_limit;
-
-	if (splx->type != ACPI_TYPE_PACKAGE ||
-	    splx->package.count != 2 ||
-	    splx->package.elements[0].type != ACPI_TYPE_INTEGER ||
-	    splx->package.elements[0].integer.value != 0) {
-		IWL_ERR(trans, "Unsupported splx structure\n");
-		return 0;
-	}
-
-	limits = &splx->package.elements[1];
-	if (limits->type != ACPI_TYPE_PACKAGE ||
-	    limits->package.count < 2 ||
-	    limits->package.elements[0].type != ACPI_TYPE_INTEGER ||
-	    limits->package.elements[1].type != ACPI_TYPE_INTEGER) {
-		IWL_ERR(trans, "Invalid limits element\n");
-		return 0;
-	}
-
-	domain_type = &limits->package.elements[0];
-	power_limit = &limits->package.elements[1];
-	if (!(domain_type->integer.value & SPL_DOMAINTYPE_WIFI)) {
-		IWL_DEBUG_INFO(trans, "WiFi power is not limited\n");
-		return 0;
-	}
-
-	return power_limit->integer.value;
-}
-
-static void set_dflt_pwr_limit(struct iwl_trans *trans, struct pci_dev *pdev)
-{
-	acpi_handle pxsx_handle;
-	acpi_handle handle;
-	struct acpi_buffer splx = {ACPI_ALLOCATE_BUFFER, NULL};
-	acpi_status status;
-
-	pxsx_handle = ACPI_HANDLE(&pdev->dev);
-	if (!pxsx_handle) {
-		IWL_DEBUG_INFO(trans,
-			       "Could not retrieve root port ACPI handle\n");
-		return;
-	}
-
-	/* Get the method's handle */
-	status = acpi_get_handle(pxsx_handle, (acpi_string)SPL_METHOD, &handle);
-	if (ACPI_FAILURE(status)) {
-		IWL_DEBUG_INFO(trans, "SPL method not found\n");
-		return;
-	}
-
-	/* Call SPLC with no arguments */
-	status = acpi_evaluate_object(handle, NULL, NULL, &splx);
-	if (ACPI_FAILURE(status)) {
-		IWL_ERR(trans, "SPLC invocation failed (0x%x)\n", status);
-		return;
-	}
-
-	trans->dflt_pwr_limit = splx_get_pwr_limit(trans, splx.pointer);
-	IWL_DEBUG_INFO(trans, "Default power limit set to %lld\n",
-		       trans->dflt_pwr_limit);
-	kfree(splx.pointer);
-}
-
-#else /* CONFIG_ACPI */
-static void set_dflt_pwr_limit(struct iwl_trans *trans, struct pci_dev *pdev) {}
-#endif
-
-/* PCI registers */
-#define PCI_CFG_RETRY_TIMEOUT	0x041
-
-static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-{
-	const struct iwl_cfg *cfg = (struct iwl_cfg *)(ent->driver_data);
-	const struct iwl_cfg *cfg_7265d __maybe_unused = NULL;
-	struct iwl_trans *iwl_trans;
-	struct iwl_trans_pcie *trans_pcie;
-	int ret;
-
-	iwl_trans = iwl_trans_pcie_alloc(pdev, ent, cfg);
-	if (IS_ERR(iwl_trans))
-		return PTR_ERR(iwl_trans);
-
-#if IS_ENABLED(CONFIG_IWLMVM)
-	/*
-	 * special-case 7265D, it has the same PCI IDs.
-	 *
-	 * Note that because we already pass the cfg to the transport above,
-	 * all the parameters that the transport uses must, until that is
-	 * changed, be identical to the ones in the 7265D configuration.
-	 */
-	if (cfg == &iwl7265_2ac_cfg)
-		cfg_7265d = &iwl7265d_2ac_cfg;
-	else if (cfg == &iwl7265_2n_cfg)
-		cfg_7265d = &iwl7265d_2n_cfg;
-	else if (cfg == &iwl7265_n_cfg)
-		cfg_7265d = &iwl7265d_n_cfg;
-	if (cfg_7265d &&
-	    (iwl_trans->hw_rev & CSR_HW_REV_TYPE_MSK) == CSR_HW_REV_TYPE_7265D) {
-		cfg = cfg_7265d;
-		iwl_trans->cfg = cfg_7265d;
-	}
-#endif
-
-	pci_set_drvdata(pdev, iwl_trans);
-
-	trans_pcie = IWL_TRANS_GET_PCIE_TRANS(iwl_trans);
-	trans_pcie->drv = iwl_drv_start(iwl_trans, cfg);
-
-	if (IS_ERR(trans_pcie->drv)) {
-		ret = PTR_ERR(trans_pcie->drv);
-		goto out_free_trans;
-	}
-
-	set_dflt_pwr_limit(iwl_trans, pdev);
-
-	/* register transport layer debugfs here */
-	ret = iwl_trans_dbgfs_register(iwl_trans, iwl_trans->dbgfs_dir);
-	if (ret)
-		goto out_free_drv;
-
-	return 0;
-
-out_free_drv:
-	iwl_drv_stop(trans_pcie->drv);
-out_free_trans:
-	iwl_trans_pcie_free(iwl_trans);
-	return ret;
-}
-
-static void iwl_pci_remove(struct pci_dev *pdev)
-{
-	struct iwl_trans *trans = pci_get_drvdata(pdev);
-	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
-
-	iwl_drv_stop(trans_pcie->drv);
-	iwl_trans_pcie_free(trans);
-}
-
-#ifdef CONFIG_PM_SLEEP
-
-static int iwl_pci_suspend(struct device *device)
-{
-	/* Before you put code here, think about WoWLAN. You cannot check here
-	 * whether WoWLAN is enabled or not, and your code will run even if
-	 * WoWLAN is enabled - don't kill the NIC, someone may need it in Sx.
-	 */
-
-	return 0;
-}
-
-static int iwl_pci_resume(struct device *device)
-{
-	struct pci_dev *pdev = to_pci_dev(device);
-	struct iwl_trans *trans = pci_get_drvdata(pdev);
-	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
-	bool hw_rfkill;
-
-	/* Before you put code here, think about WoWLAN. You cannot check here
-	 * whether WoWLAN is enabled or not, and your code will run even if
-	 * WoWLAN is enabled - the NIC may be alive.
-	 */
-
-	/*
-	 * We disable the RETRY_TIMEOUT register (0x41) to keep
-	 * PCI Tx retries from interfering with C3 CPU state.
-	 */
-	pci_write_config_byte(pdev, PCI_CFG_RETRY_TIMEOUT, 0x00);
-
-	if (!trans->op_mode)
-		return 0;
-
-	/*
-	 * Enable rfkill interrupt (in order to keep track of
-	 * the rfkill status)
-	 */
-	iwl_enable_rfkill_int(trans);
-
-	hw_rfkill = iwl_is_rfkill_set(trans);
-
-	mutex_lock(&trans_pcie->mutex);
-	iwl_trans_pcie_rf_kill(trans, hw_rfkill);
-	mutex_unlock(&trans_pcie->mutex);
-
-	return 0;
-}
-
-static SIMPLE_DEV_PM_OPS(iwl_dev_pm_ops, iwl_pci_suspend, iwl_pci_resume);
-
-#define IWL_PM_OPS	(&iwl_dev_pm_ops)
-
-#else
-
-#define IWL_PM_OPS	NULL
-
-#endif
-
-static struct pci_driver iwl_pci_driver = {
-	.name = DRV_NAME,
-	.id_table = iwl_hw_card_ids,
-	.probe = iwl_pci_probe,
-	.remove = iwl_pci_remove,
-	.driver.pm = IWL_PM_OPS,
+        {0}
 };
 
-int __must_check iwl_pci_register_driver(void)
-{
-	int ret;
-	ret = pci_register_driver(&iwl_pci_driver);
-	if (ret)
-		pr_err("Unable to initialize PCI module\n");
-
-	return ret;
-}
-
-void iwl_pci_unregister_driver(void)
-{
-	pci_unregister_driver(&iwl_pci_driver);
-}
+#endif  // IWL_DEVICE_LIST_H
