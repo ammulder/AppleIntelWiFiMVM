@@ -27,47 +27,27 @@
 		A2FCD07AF5F3CDDFF32CAF76 /* iwl-io.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD7BC967256010BF17E48 /* iwl-io.h */; };
 		A2FCD094FB9829150EF00C5A /* ethtool.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD467D70681F191FBC3A9 /* ethtool.h */; };
 		A2FCD0D5132A6CFB5FFC14A3 /* iwl-phy-db.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD9CE0541AEEFCCA7A66F /* iwl-phy-db.h */; };
-		A2FCD16BACB16F629F23C948 /* fw.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA1C226BA76A53431A98 /* fw.c */; };
-		A2FCD181A16BFB657FB1AE48 /* binding.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD6B2C5774D46B9217482 /* binding.c */; };
-		A2FCD1CB0C7D1FC9AC4341C2 /* tx.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA19BEC355B0B2EDFAF8 /* tx.c */; };
 		A2FCD2056A42765715D3F9D4 /* iwl-devtrace-io.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD5806B9D33256015B3A3 /* iwl-devtrace-io.h */; };
 		A2FCD21059D0E05E32DCCD8F /* mac80211.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDAE3465B1D30180CCA01 /* mac80211.h */; };
 		A2FCD234BD75411EFDCF2100 /* fw-api-sta.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD23D8FA4288562092CB8 /* fw-api-sta.h */; };
-		A2FCD2442651DEFE0F811BF5 /* rx.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD20F5573B109F51F551B /* rx.c */; };
 		A2FCD25521476A3AC84050A9 /* fw-api-stats.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD7BF6B87FBAAC83D6DBC /* fw-api-stats.h */; };
-		A2FCD26F10E6C8554927A682 /* ops.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD792EEB4238DE2E958D5 /* ops.c */; };
 		A2FCD277AA85A012E67BEF21 /* testmode.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDDDD98322AB8C5C4D1FB /* testmode.h */; };
 		A2FCD294E384FEF6AE84B1FA /* errno-base.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD8CDDDF2EF198B46E342 /* errno-base.h */; };
 		A2FCD29B0122E0298FC03EB4 /* iwl-eeprom-read.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD8E37BF8170159D9706D /* iwl-eeprom-read.h */; };
-		A2FCD2B097C9B7CB5AFC5543 /* iwl-debug.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD30C3FEF19F4C1D104D9 /* iwl-debug.c */; };
-		A2FCD2BA53B110B8D19FD6AE /* mac-ctxt.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA2F83C291758CB01366 /* mac-ctxt.c */; };
 		A2FCD30B68B35F2206580FA4 /* netdev_features.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD6B388512AD2064DBD4D /* netdev_features.h */; };
 		A2FCD323C06691B1CF9D16AD /* in6.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDF9E3517BCECDA96882A /* in6.h */; };
 		A2FCD352110DB053AEF932E5 /* iwl-csr.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD48070B97426123C2F65 /* iwl-csr.h */; };
 		A2FCD35B69DD8C9CB51ED028 /* linux-porting.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDF847536A9C83F6BA217 /* linux-porting.h */; };
 		A2FCD367150D602CDE3D3F0B /* rs.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD98BDB382A80136554D8 /* rs.h */; };
-		A2FCD40F9F8AF56FF05C4D40 /* trans.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA8650BCC9893C2E6B7F /* trans.c */; };
 		A2FCD43C85DA4AB2C4C0D504 /* fw-api-scan.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD9973473337F7C0F9EF5 /* fw-api-scan.h */; };
-		A2FCD4445F8212EA468C1A9A /* tt.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDB002FB53BF07452C4FE /* tt.c */; };
 		A2FCD4791EA99F30BA3AC597 /* device-list.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD600B7A833DC0D95A3B4 /* device-list.h */; };
 		A2FCD4843684CF4C6B5DFBA4 /* iwl-drv.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDD8FF038D8B163A0E74D /* iwl-drv.h */; };
 		A2FCD4AC6A25585592B2C8CC /* iwl-debug.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD41DBDA1CF8B53404881 /* iwl-debug.h */; };
 		A2FCD4BA05D4743C04D53562 /* fw-api-mac.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD078C9946464EE42C2A7 /* fw-api-mac.h */; };
-		A2FCD4CB67F2BC1401653845 /* drv.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD6213C22A0726A91C49A /* drv.c */; };
-		A2FCD4F92C0B6E40DA52BF02 /* time-event.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDEE3F18B2C0C9939EDCD /* time-event.c */; };
 		A2FCD4F95BE5CF22398BBA6A /* fw-api-tx.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD373A9A31042E840F204 /* fw-api-tx.h */; };
-		A2FCD51AE3A91F1635DBD4B5 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD06746654599D0C88CC1 /* led.c */; };
 		A2FCD5BA06A04C649C4FD472 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDCD49E47017EB368BBE0 /* internal.h */; };
 		A2FCD5D25629F558DED4543E /* iwl-nvm-parse.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD525FD212BB738568150 /* iwl-nvm-parse.h */; };
-		A2FCD60D412111321A6D262C /* debugfs.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDC840953A2874D209D83 /* debugfs.c */; };
-		A2FCD6326167BB59197A3013 /* iwl-nvm-parse.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD217AA30AC485128AE49 /* iwl-nvm-parse.c */; };
-		A2FCD66CE63592610F569432 /* iwl-io.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD7AD6026E3F31FCF567E /* iwl-io.c */; };
-		A2FCD67668610553DAC04CA0 /* iwl-phy-db.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD61986A4D5102B75C6AE /* iwl-phy-db.c */; };
-		A2FCD6F3B1CAF02EC9DD9DB8 /* d3.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD6DEAFDAD7ED644B227D /* d3.c */; };
 		A2FCD70FE41BF5B9569440DA /* iwl-fh.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD23669C1ABD16F6C6A0D /* iwl-fh.h */; };
-		A2FCD7243DACB91C72FDDC24 /* tof.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD75F14CDF47F81107B29 /* tof.c */; };
-		A2FCD76C77B6A245ACA52468 /* iwl-devtrace.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDB8A29F789A4755C30C2 /* iwl-devtrace.c */; };
-		A2FCD7851008D1EC15DC62D0 /* iwl-eeprom-read.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD649AB1A8338CEC789EC /* iwl-eeprom-read.c */; };
 		A2FCD7C772A2598E0AB272F1 /* errno.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDA5CBE476678ECB01ACB /* errno.h */; };
 		A2FCD872F3C76C511791895B /* iwl-op-mode.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDBCDC159E47BD33E1055 /* iwl-op-mode.h */; };
 		A2FCD8C7310AD04B4CC6524C /* iwl-devtrace-data.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD42224E4A750766564DB /* iwl-devtrace-data.h */; };
@@ -76,51 +56,30 @@
 		A2FCD965DD89419B918AFA9D /* tof.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDBDE2CB24BCB6DC31D5F /* tof.h */; };
 		A2FCD98C82D8BE7F557D5EEC /* debugfs.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD99763A514A4806AB62C /* debugfs.h */; };
 		A2FCD98F4752FAEABD92B5CE /* iwl-devtrace-iwlwifi.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD0966FF9F8B083F0083C /* iwl-devtrace-iwlwifi.h */; };
-		A2FCD9943C86ADD6C5F6340E /* iwl-notif-wait.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDE2AF9B5D6ED49B12879 /* iwl-notif-wait.c */; };
-		A2FCD9E03A7B0B2283D7B58A /* debugfs-vif.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD7352C4E1DAB1C9D2E05 /* debugfs-vif.c */; };
-		A2FCD9FC67AAE6AE04FF711F /* rs.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD3429A6CC5376D653275 /* rs.c */; };
 		A2FCDA020548385F9C97E8A2 /* fw-api-rs.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD8EB9D56525DB230C336 /* fw-api-rs.h */; };
-		A2FCDA3D4E69ABEDB449B727 /* phy-ctxt.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDAB501D5D25BCEE4E8A3 /* phy-ctxt.c */; };
 		A2FCDA6E742C1D929696D253 /* linux-config.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD590F4C36FBECFDB476D /* linux-config.h */; };
 		A2FCDA7F0195BB27DC847BD6 /* iwl-devtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDE0117E32AE06E43852D /* iwl-devtrace.h */; };
-		A2FCDAACE860AF511516D9DD /* tx.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDFCCFFAAE6579310C748 /* tx.c */; };
 		A2FCDB48E8C3A68FCE46B774 /* iwl-notif-wait.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDE37631C1B9116049D0B /* iwl-notif-wait.h */; };
 		A2FCDB4927268278E2C960BE /* iwl-fw.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD5596850ABEE08B85362 /* iwl-fw.h */; };
 		A2FCDBAE151E331A3370495C /* iwl-devtrace-msg.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDB0C61CB120228E751C4 /* iwl-devtrace-msg.h */; };
 		A2FCDBB0742DE5090ED1590F /* mvm.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD2C8692C477F01DD1422 /* mvm.h */; };
-		A2FCDBEE027F98DF29196EBF /* mac80211.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDFB276B1472271AD924A /* mac80211.c */; };
 		A2FCDC3BCD61A8078C7F7256 /* iwl-fw-file.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD2DD04B886E35573EB8D /* iwl-fw-file.h */; };
-		A2FCDC51D784FFCC02DD9F3A /* sta.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD4E13608BBA0119672C6 /* sta.c */; };
 		A2FCDC9ACC712D1004718E80 /* fw-api.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDEAC0BA3158B96BF8FD1 /* fw-api.h */; };
-		A2FCDCAAFCE17614B6D098F4 /* offloading.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA7E41E9C2083479BE2D /* offloading.c */; };
-		A2FCDCAC30A4A9E34E0EDD6C /* rx.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDA611076D4C6B2BAB98D /* rx.c */; };
-		A2FCDCEA9A7664B13654DFC0 /* tdls.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD1F462A3E4E4F7736C09 /* tdls.c */; };
-		A2FCDD586EF3A5244E471531 /* power.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD27325081D4E76D54AA9 /* power.c */; };
-		A2FCDD6AE97B5B62F7B27078 /* coex.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD04E82D43A9EA4018224 /* coex.c */; };
 		A2FCDD802419EDEE8EA2B34C /* iwl-modparams.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDE0BC5D92545276DD5F2 /* iwl-modparams.h */; };
-		A2FCDDAC2BAA667895307B07 /* iwl-eeprom-parse.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD696DF1B8319A441F8B7 /* iwl-eeprom-parse.c */; };
 		A2FCDDD37D18079F1B6987F6 /* sta.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDB5C099D2AE4452C5032 /* sta.h */; };
 		A2FCDDE9FEA912C919B70797 /* fw-api-power.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD5B4BAFD3AF0F8D75674 /* fw-api-power.h */; };
-		A2FCDDEA36FA6BC2BFDFC9A5 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCDDE2F0BA585D556899E7 /* utils.c */; };
 		A2FCDDF6F73A6C3D194B6C90 /* fw-api-coex.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD7B12D89FA931DA7EBA7 /* fw-api-coex.h */; };
 		A2FCDDFA4C51298436578869 /* iwl-prph.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD78A0CF0B07C5C6F1073 /* iwl-prph.h */; };
 		A2FCDE1EF35F8587FB404EC9 /* if_ether.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD89B8A9FABF93F360FD7 /* if_ether.h */; };
 		A2FCDE6C996ECC6F90042F3D /* fw-api-rx.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD77E81A82FF39020F5EC /* fw-api-rx.h */; };
-		A2FCDE9411A9F36281A8E288 /* nvm.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD8952F1CF26AC13E164A /* nvm.c */; };
 		A2FCDED5194548A6ABA13286 /* time-event.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD40217433E4CD193EF5C /* time-event.h */; };
 		A2FCDED79AE7AEA4980B25C9 /* fw-api-tof.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD2D403835C49A03FC015 /* fw-api-tof.h */; };
-		A2FCDEE40330972B60BDEBE1 /* quota.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD745B11FDC066DCACF17 /* quota.c */; };
-		A2FCDF0427638ECA64FAC34C /* iwl-trans.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD6A1DFE667C210CF826C /* iwl-trans.c */; };
 		A2FCDF09B6049C00BD7EB669 /* nl80211.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD7E08F44EBD5A932F3E0 /* nl80211.h */; };
 		A2FCDF0DF28EDB54320A9501 /* fw-api-d3.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDBDE638F98ECDB4809A6 /* fw-api-d3.h */; };
 		A2FCDF2243E963F4E37CBB0E /* linux-other.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD888CD13F271AD77635B /* linux-other.h */; };
 		A2FCDF3F9259DAF02AE58076 /* ieee80211.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDD73A9454809B588E518 /* ieee80211.h */; };
-		A2FCDF55C10DDEA344E7C5F6 /* coex_legacy.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD4380D45DAB2CE8CF9C9 /* coex_legacy.c */; };
 		A2FCDFA09982465339F2A512 /* iwl-eeprom-parse.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD72C024F472CC18D04BD /* iwl-eeprom-parse.h */; };
 		A2FCDFAE99E99DA74FAE7CC4 /* iwl-devtrace-ucode.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD12F940C66648BA087A0 /* iwl-devtrace-ucode.h */; };
-		A2FCDFC6DF8C784B2B37383B /* scan.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD43CF33A87472965791B /* scan.c */; };
-		A2FCDFDF2B6333ADD6B7B14E /* iwl-drv.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD03B11100A260CB826A4 /* iwl-drv.c */; };
-		A2FCDFE78BC5B1F9A4FA8D66 /* sf.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD5B482FEB265263A31C2 /* sf.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -589,47 +548,6 @@
 				843096631C70CE6F0020E454 /* FirmwareParser.cpp in Sources */,
 				84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */,
 				847F26CA1C6EA2870007A5B0 /* FirmwareLoader.cpp in Sources */,
-				A2FCD2B097C9B7CB5AFC5543 /* iwl-debug.c in Sources */,
-				A2FCD76C77B6A245ACA52468 /* iwl-devtrace.c in Sources */,
-				A2FCDFDF2B6333ADD6B7B14E /* iwl-drv.c in Sources */,
-				A2FCDDAC2BAA667895307B07 /* iwl-eeprom-parse.c in Sources */,
-				A2FCD7851008D1EC15DC62D0 /* iwl-eeprom-read.c in Sources */,
-				A2FCD66CE63592610F569432 /* iwl-io.c in Sources */,
-				A2FCD9943C86ADD6C5F6340E /* iwl-notif-wait.c in Sources */,
-				A2FCD6326167BB59197A3013 /* iwl-nvm-parse.c in Sources */,
-				A2FCD67668610553DAC04CA0 /* iwl-phy-db.c in Sources */,
-				A2FCDF0427638ECA64FAC34C /* iwl-trans.c in Sources */,
-				A2FCD6F3B1CAF02EC9DD9DB8 /* d3.c in Sources */,
-				A2FCD16BACB16F629F23C948 /* fw.c in Sources */,
-				A2FCD9FC67AAE6AE04FF711F /* rs.c in Sources */,
-				A2FCDCAC30A4A9E34E0EDD6C /* rx.c in Sources */,
-				A2FCDFE78BC5B1F9A4FA8D66 /* sf.c in Sources */,
-				A2FCD4445F8212EA468C1A9A /* tt.c in Sources */,
-				A2FCD1CB0C7D1FC9AC4341C2 /* tx.c in Sources */,
-				A2FCD51AE3A91F1635DBD4B5 /* led.c in Sources */,
-				A2FCDE9411A9F36281A8E288 /* nvm.c in Sources */,
-				A2FCD26F10E6C8554927A682 /* ops.c in Sources */,
-				A2FCDC51D784FFCC02DD9F3A /* sta.c in Sources */,
-				A2FCD7243DACB91C72FDDC24 /* tof.c in Sources */,
-				A2FCDD6AE97B5B62F7B27078 /* coex.c in Sources */,
-				A2FCDFC6DF8C784B2B37383B /* scan.c in Sources */,
-				A2FCDCEA9A7664B13654DFC0 /* tdls.c in Sources */,
-				A2FCDD586EF3A5244E471531 /* power.c in Sources */,
-				A2FCDEE40330972B60BDEBE1 /* quota.c in Sources */,
-				A2FCDDEA36FA6BC2BFDFC9A5 /* utils.c in Sources */,
-				A2FCD181A16BFB657FB1AE48 /* binding.c in Sources */,
-				A2FCD60D412111321A6D262C /* debugfs.c in Sources */,
-				A2FCD2BA53B110B8D19FD6AE /* mac-ctxt.c in Sources */,
-				A2FCDBEE027F98DF29196EBF /* mac80211.c in Sources */,
-				A2FCDA3D4E69ABEDB449B727 /* phy-ctxt.c in Sources */,
-				A2FCDCAAFCE17614B6D098F4 /* offloading.c in Sources */,
-				A2FCD4F92C0B6E40DA52BF02 /* time-event.c in Sources */,
-				A2FCDF55C10DDEA344E7C5F6 /* coex_legacy.c in Sources */,
-				A2FCD9E03A7B0B2283D7B58A /* debugfs-vif.c in Sources */,
-				A2FCD2442651DEFE0F811BF5 /* rx.c in Sources */,
-				A2FCDAACE860AF511516D9DD /* tx.c in Sources */,
-				A2FCD4CB67F2BC1401653845 /* drv.c in Sources */,
-				A2FCD40F9F8AF56FF05C4D40 /* trans.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
