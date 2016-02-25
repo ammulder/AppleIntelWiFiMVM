@@ -64,9 +64,12 @@
 
 #ifndef __iwl_fw_h__
 #define __iwl_fw_h__
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <net/mac80211.h>
-
+#endif // DISABLED_CODE
+#include "linux-porting.h"
+#include "mac80211.h"
 #include "iwl-fw-file.h"
 #include "iwl-fw-error-dump.h"
 
@@ -125,7 +128,7 @@ fw_has_capa(const struct iwl_ucode_capabilities *capabilities,
 
 /* one for each uCode image (inst/data, init/runtime/wowlan) */
 struct fw_desc {
-	const void *data;	/* vmalloc'ed data */
+	void *data;   	/* vmalloc'ed data */
 	u32 len;		/* size in bytes */
 	u32 offset;		/* offset in the device */
 };

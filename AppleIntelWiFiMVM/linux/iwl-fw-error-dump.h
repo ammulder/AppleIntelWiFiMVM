@@ -65,7 +65,10 @@
 #ifndef __fw_error_dump_h__
 #define __fw_error_dump_h__
 
+#if DISABLED_CODE
 #include <linux/types.h>
+#endif // DISABLED_CODE
+#include "linux-porting.h"
 
 #define IWL_FW_ERROR_DUMP_BARKER	0x14789632
 
@@ -263,7 +266,7 @@ struct iwl_fw_error_dump_paging {
 static inline struct iwl_fw_error_dump_data *
 iwl_fw_error_next_data(struct iwl_fw_error_dump_data *data)
 {
-	return (void *)(data->data + le32_to_cpu(data->len));
+	return (struct iwl_fw_error_dump_data *)(data->data + le32_to_cpu(data->len));
 }
 
 /**

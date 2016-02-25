@@ -98,6 +98,7 @@ MODULE_LICENSE("GPL");
 static struct dentry *iwl_dbgfs_root;
 #endif
 
+#if DISABLED_CODE // Moving to header file
 /**
  * struct iwl_drv - drv common data
  * @list: list of drv structures using this opmode
@@ -130,7 +131,7 @@ struct iwl_drv {
 	struct dentry *dbgfs_op_mode;
 #endif
 };
-
+#endif // DISABLED_CODE
 enum {
 	DVM_OP_MODE =	0,
 	MVM_OP_MODE =	1,
@@ -146,7 +147,7 @@ static struct iwlwifi_opmode_table {
 	[DVM_OP_MODE] = { .name = "iwldvm", .ops = NULL },
 	[MVM_OP_MODE] = { .name = "iwlmvm", .ops = NULL },
 };
-
+#if DISABLED_CODE // moving to header file
 #define IWL_DEFAULT_SCAN_CHANNELS 40
 
 /*
@@ -158,6 +159,7 @@ struct fw_sec {
 	size_t size;			/* section size */
 	u32 offset;			/* offset of writing in the device */
 };
+#endif // DISABLED_CODE
 
 static void iwl_free_fw_desc(struct iwl_drv *drv, struct fw_desc *desc)
 {
@@ -212,8 +214,10 @@ static int iwl_alloc_fw_desc(struct iwl_drv *drv, struct fw_desc *desc,
 static void iwl_req_fw_callback(const struct firmware *ucode_raw,
 				void *context);
 
+#if DISABLED_CODE // Moving to header file
 #define UCODE_EXPERIMENTAL_INDEX	100
 #define UCODE_EXPERIMENTAL_TAG		"exp"
+#endif // DISABLED_CODE
 
 static int iwl_request_firmware(struct iwl_drv *drv, bool first)
 {
@@ -262,6 +266,7 @@ static int iwl_request_firmware(struct iwl_drv *drv, bool first)
 				       GFP_KERNEL, drv, iwl_req_fw_callback);
 }
 
+#if DISABLED_CODE // Moving to header file
 struct fw_img_parsing {
 	struct fw_sec sec[IWL_UCODE_SECTION_MAX];
 	int sec_counter;
@@ -299,6 +304,7 @@ struct iwl_firmware_pieces {
 	struct iwl_fw_dbg_trigger_tlv *dbg_trigger_tlv[FW_DBG_TRIGGER_MAX];
 	size_t dbg_trigger_tlv_len[FW_DBG_TRIGGER_MAX];
 };
+#endif // DISABLED_CODE
 
 /*
  * These functions are just to extract uCode section data from the pieces

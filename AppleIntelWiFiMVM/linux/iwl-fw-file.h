@@ -65,8 +65,13 @@
 #ifndef __iwl_fw_file_h__
 #define __iwl_fw_file_h__
 
+#if DISABLED_CODE
 #include <linux/netdevice.h>
 #include <linux/nl80211.h>
+#endif // DISABLED_CODE
+#include "linux-porting.h"
+#include "nl80211.h"
+#include "netdev_features.h"
 
 /* v1/v2 uCode file layout */
 struct iwl_ucode_header {

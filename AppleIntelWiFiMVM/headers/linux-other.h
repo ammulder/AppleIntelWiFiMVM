@@ -9,6 +9,9 @@
 
 #import "linux-porting.h"
 
+// =================== FROM include/linux/netdevice.h ==================
+#define	NETDEV_ALIGN		32
+
 // =================== FROM include/linux/pci_ids.h ==================
 #define PCI_VENDOR_ID_INTEL             0x8086
 

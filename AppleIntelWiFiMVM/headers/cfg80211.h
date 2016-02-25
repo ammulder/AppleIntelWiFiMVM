@@ -26,6 +26,7 @@
 #include <net/regulatory.h>
 #endif
 #include "linux-porting.h"
+#include "linux-other.h"
 #include "nl80211.h"
 #include "if_ether.h"
 #include "ieee80211.h"
@@ -823,7 +824,9 @@ enum station_parameters_apply_mask {
  */
 struct station_parameters {
 	const u8 *supported_rates;
+#if DISABLED_CODE
 	struct net_device *vlan;
+#endif
 	u32 sta_flags_mask, sta_flags_set;
 	u32 sta_modify_mask;
 	int listen_interval;
@@ -1486,6 +1489,7 @@ struct cfg80211_scan_request {
 	struct ieee80211_channel *channels[0];
 };
 
+#if DISABLED_CODE
 static inline void get_random_mask_addr(u8 *buf, const u8 *addr, const u8 *mask)
 {
 	int i;
@@ -1496,7 +1500,7 @@ static inline void get_random_mask_addr(u8 *buf, const u8 *addr, const u8 *mask)
 		buf[i] |= addr[i] & mask[i];
 	}
 }
-
+#endif // DISABLED_CODE
 /**
  * struct cfg80211_match_set - sets of attributes to match
  *
@@ -1521,7 +1525,7 @@ struct cfg80211_sched_scan_plan {
 	u32 interval;
 	u32 iterations;
 };
-
+#if DISABLED_CODE
 /**
  * struct cfg80211_sched_scan_request - scheduled scan request description
  *
@@ -1586,6 +1590,7 @@ struct cfg80211_sched_scan_request {
 	/* keep last */
 	struct ieee80211_channel *channels[0];
 };
+#endif // DISABLED_CODE
 
 /**
  * enum cfg80211_signal_type - signal type
@@ -1630,7 +1635,9 @@ struct cfg80211_inform_bss {
  */
 struct cfg80211_bss_ies {
 	u64 tsf;
+#if DISABLED_CODE
 	struct rcu_head rcu_head;
+#endif // DISABLED_CODE
 	int len;
 	bool from_beacon;
 	u8 data[];
@@ -3272,10 +3279,11 @@ struct wiphy {
 	/* fields below are read-only, assigned by cfg80211 */
 
 	const struct ieee80211_regdomain __rcu *regd;
-
+#if DISABLED_CODE
 	/* the item in /sys/class/ieee80211/ points to this,
 	 * you need use set_wiphy_dev() (see below) */
 	struct device dev;
+#endif // DISABLED_CODE
 
 	/* protects ->resume, ->suspend sysfs callbacks against unregister hw */
 	bool registered;
@@ -3285,9 +3293,10 @@ struct wiphy {
 
 	const struct ieee80211_ht_cap *ht_capa_mod_mask;
 	const struct ieee80211_vht_cap *vht_capa_mod_mask;
-
+#if DISABLED_CODE
 	/* the network namespace this phy lives in currently */
 	possible_net_t _net;
+#endif // DISABLED_CODE
 
 #ifdef CONFIG_CFG80211_WEXT
 	const struct iw_handler_def *wext;
@@ -3307,6 +3316,7 @@ struct wiphy {
 	char priv[0] __aligned(NETDEV_ALIGN);
 };
 
+#if DISABLED_CODE
 static inline struct net *wiphy_net(struct wiphy *wiphy)
 {
 	return read_pnet(&wiphy->_net);
@@ -3316,6 +3326,7 @@ static inline void wiphy_net_set(struct wiphy *wiphy, struct net *net)
 {
 	write_pnet(&wiphy->_net, net);
 }
+#endif // DISABLED_CODE
 
 /**
  * wiphy_priv - return priv from wiphy
@@ -3329,6 +3340,7 @@ static inline void *wiphy_priv(struct wiphy *wiphy)
 	return &wiphy->priv;
 }
 
+#if DISABLED_CODE
 /**
  * priv_to_wiphy - return the wiphy containing the priv
  *
@@ -3373,6 +3385,7 @@ static inline const char *wiphy_name(const struct wiphy *wiphy)
 {
 	return dev_name(&wiphy->dev);
 }
+#endif // DISABLED_CODE
 
 /**
  * wiphy_new_nm - create a new wiphy for use with cfg80211
@@ -3504,15 +3517,18 @@ struct wireless_dev {
 	enum nl80211_iftype iftype;
 
 	/* the remainder of this struct should be private to cfg80211 */
+#if DISABLED_CODE
 	struct list_head list;
 	struct net_device *netdev;
+#endif
 
 	u32 identifier;
 
+#if DISABLED_CODE
 	struct list_head mgmt_registrations;
 	spinlock_t mgmt_registrations_lock;
-
 	struct mutex mtx;
+#endif
 
 	bool use_4addr, p2p_started;
 
@@ -3524,9 +3540,10 @@ struct wireless_dev {
 	struct cfg80211_conn *conn;
 	struct cfg80211_cached_keys *connect_keys;
 
+#if DISABLED_CODE
 	struct list_head event_list;
 	spinlock_t event_lock;
-
+#endif
 	struct cfg80211_internal_bss *current_bss; /* associated / joined */
 	struct cfg80211_chan_def preset_chandef;
 	struct cfg80211_chan_def chandef;
@@ -3563,12 +3580,14 @@ struct wireless_dev {
 #endif
 };
 
+#if DISABLED_CODE
 static inline u8 *wdev_address(struct wireless_dev *wdev)
 {
 	if (wdev->netdev)
 		return wdev->netdev->dev_addr;
 	return wdev->address;
 }
+#endif
 
 /**
  * wdev_priv - return wiphy priv from wireless_dev

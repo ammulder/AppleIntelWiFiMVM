@@ -89,11 +89,12 @@ static bool check_warn_condition(bool test, char *message) {
 
 #endif // ENDIAN
 
-#define s8      SInt8
 #define u8      UInt8
 #define u16     UInt16
 #define u32     UInt32
 #define u64     UInt64
+#define s8      SInt8
+#define s16     SInt16
 #define s32     SInt32
 #define s64     SInt64
 #define __be16  SInt16
@@ -138,7 +139,7 @@ static bool check_warn_condition(bool test, char *message) {
 #define le64_to_cpus(x) ((*x) = OSSwapLittleToHostInt64((*x)))
 
 #define container_of(ptr, type, member) ({                                     \
-const typeof( ((type *)0)->member ) *__mptr = (ptr);                       \
+/*const*/ typeof( ((type *)0)->member ) *__mptr = (ptr);                       \
 (type *)( (char *)__mptr - offsetof(type,member) );})
 
 
@@ -294,7 +295,12 @@ OSWriteLittleInt32((hw->flash_address), (reg), (val))
 /******************************************************************************/
 
 #define spinlock_t  IOSimpleLock *
-#define atomic_t    volatile SInt32
+typedef struct {
+    int counter;
+} atomic_t;
+typedef struct {
+    long counter;
+} atomic64_t;
 
 #define spin_lock_init(slock)                           \
 do                                                      \

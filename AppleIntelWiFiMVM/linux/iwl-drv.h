@@ -68,6 +68,101 @@
 #include <linux/export.h>
 #endif
 
+// ------- ammulder moved in from .c file ------
+#define UCODE_EXPERIMENTAL_INDEX	100
+#define UCODE_EXPERIMENTAL_TAG		"exp"
+#define IWL_DEFAULT_SCAN_CHANNELS 40
+/**
+ * struct iwl_drv - drv common data
+ * @list: list of drv structures using this opmode
+ * @fw: the iwl_fw structure
+ * @op_mode: the running op_mode
+ * @trans: transport layer
+ * @dev: for debug prints only
+ * @cfg: configuration struct
+ * @fw_index: firmware revision to try loading
+ * @firmware_name: composite filename of ucode file to load
+ * @request_firmware_complete: the firmware has been obtained from user space
+ */
+struct iwl_drv {
+#if DISABLED_CODE
+    struct list_head list;
+#endif // DISABLED_CODE
+    struct iwl_fw fw;
+
+    struct iwl_op_mode *op_mode;
+    struct iwl_trans *trans;
+    struct device *dev;
+    const struct iwl_cfg *cfg;
+
+    int fw_index;                   /* firmware we're trying to load */
+    char firmware_name[32];         /* name of firmware file to load */
+
+#if DISABLED_CODE
+    struct completion request_firmware_complete;
+#endif // DISABLED_CODE
+
+#ifdef CONFIG_IWLWIFI_DEBUGFS
+    struct dentry *dbgfs_drv;
+	struct dentry *dbgfs_trans;
+	struct dentry *dbgfs_op_mode;
+#endif
+    struct {
+        int dbg_dest_tlv;
+        int dbg_conf_tlv[FW_DBG_CONF_MAX];
+        int dbg_trigger_tlv[FW_DBG_TRIGGER_MAX];
+    } sizes;
+};
+
+/*
+ * struct fw_sec: Just for the image parsing process.
+ * For the fw storage we are using struct fw_desc.
+ */
+struct fw_sec {
+    const void *data;		/* the sec data */
+    size_t size;			/* section size */
+    u32 offset;			/* offset of writing in the device */
+};
+
+struct fw_img_parsing {
+    struct fw_sec sec[IWL_UCODE_SECTION_MAX];
+    int sec_counter;
+};
+
+/*
+ * struct fw_sec_parsing: to extract fw section and it's offset from tlv
+ */
+struct fw_sec_parsing {
+    __le32 offset;
+    const u8 data[];
+} __packed;
+
+/**
+ * struct iwl_tlv_calib_data - parse the default calib data from TLV
+ *
+ * @ucode_type: the uCode to which the following default calib relates.
+ * @calib: default calibrations.
+ */
+struct iwl_tlv_calib_data {
+    __le32 ucode_type;
+    struct iwl_tlv_calib_ctrl calib;
+} __packed;
+
+struct iwl_firmware_pieces {
+    struct fw_img_parsing img[IWL_UCODE_TYPE_MAX];
+
+    u32 init_evtlog_ptr, init_evtlog_size, init_errlog_ptr;
+    u32 inst_evtlog_ptr, inst_evtlog_size, inst_errlog_ptr;
+
+    /* FW debug data parsed for driver usage */
+    struct iwl_fw_dbg_dest_tlv *dbg_dest_tlv;
+    struct iwl_fw_dbg_conf_tlv *dbg_conf_tlv[FW_DBG_CONF_MAX];
+    size_t dbg_conf_tlv_len[FW_DBG_CONF_MAX];
+    struct iwl_fw_dbg_trigger_tlv *dbg_trigger_tlv[FW_DBG_TRIGGER_MAX];
+    size_t dbg_trigger_tlv_len[FW_DBG_TRIGGER_MAX];
+};
+// ------- end ammulder moved in from .c file ------
+
 /* for all modules */
 #define DRV_NAME        "iwlwifi"
 #define DRV_COPYRIGHT	"Copyright(c) 2003- 2015 Intel Corporation"

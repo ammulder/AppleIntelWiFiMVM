@@ -2411,7 +2411,7 @@ static inline bool _ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
 
 	return false;
 }
-
+#if DISABLED_CODE
 /**
  * ieee80211_is_robust_mgmt_frame - check if skb contains a robust mgmt frame
  * @skb: the skb containing the frame, length will be checked
@@ -2431,7 +2431,7 @@ static inline bool ieee80211_is_robust_mgmt_frame(struct sk_buff *skb)
 static inline bool ieee80211_is_public_action(struct ieee80211_hdr *hdr,
 					      size_t len)
 {
-	struct ieee80211_mgmt *mgmt = (void *)hdr;
+	struct ieee80211_mgmt *mgmt = (ieee80211_mgmt *)hdr;
 
 	if (len < IEEE80211_MIN_ACTION_SIZE)
 		return false;
@@ -2553,5 +2553,6 @@ static inline bool ieee80211_action_contains_tpc(struct sk_buff *skb)
 
 	return true;
 }
+#endif // DISABLED_CODE
 
 #endif /* LINUX_IEEE80211_H */

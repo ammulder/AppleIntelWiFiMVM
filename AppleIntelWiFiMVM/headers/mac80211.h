@@ -25,6 +25,7 @@
 #include <asm/unaligned.h>
 #endif
 #include "linux-porting.h"
+#include "netdev_features.h"
 #include "if_ether.h"
 #include "ieee80211.h"
 #include "cfg80211.h"
@@ -927,6 +928,7 @@ struct ieee80211_scan_ies {
 };
 
 
+#if DISABLED_CODE
 static inline struct ieee80211_tx_info *IEEE80211_SKB_CB(struct sk_buff *skb)
 {
 	return (struct ieee80211_tx_info *)skb->cb;
@@ -936,6 +938,7 @@ static inline struct ieee80211_rx_status *IEEE80211_SKB_RXCB(struct sk_buff *skb
 {
 	return (struct ieee80211_rx_status *)skb->cb;
 }
+#endif // DISABLED_CODE
 
 /**
  * ieee80211_tx_info_clear_status - clear TX status
@@ -1644,7 +1647,9 @@ enum ieee80211_sta_rx_bandwidth {
  *	Overriding entries per-packet is possible by using cb tx control.
  */
 struct ieee80211_sta_rates {
+#if DISABLED_CODE
 	struct rcu_head rcu_head;
+#endif
 	struct {
 		s8 idx;
 		u8 count;
@@ -2147,6 +2152,7 @@ struct ieee80211_tdls_ch_sw_params {
  */
 struct ieee80211_hw *wiphy_to_ieee80211_hw(struct wiphy *wiphy);
 
+#if DISABLED_CODE
 /**
  * SET_IEEE80211_DEV - set device for 802.11 hardware
  *
@@ -2157,6 +2163,7 @@ static inline void SET_IEEE80211_DEV(struct ieee80211_hw *hw, struct device *dev
 {
 	set_wiphy_dev(hw->wiphy, dev);
 }
+#endif // DISABLED_CODE
 
 /**
  * SET_IEEE80211_PERM_ADDR - set the permanent MAC address for 802.11 hardware
@@ -3804,6 +3811,7 @@ static inline void ieee80211_rx(struct ieee80211_hw *hw, struct sk_buff *skb)
  */
 void ieee80211_rx_irqsafe(struct ieee80211_hw *hw, struct sk_buff *skb);
 
+#if DISABLED_CODE
 /**
  * ieee80211_rx_ni - receive frame (in process context)
  *
@@ -3824,6 +3832,7 @@ static inline void ieee80211_rx_ni(struct ieee80211_hw *hw,
 	ieee80211_rx(hw, skb);
 	local_bh_enable();
 }
+#endif // DISABLED_CODE
 
 /**
  * ieee80211_sta_ps_transition - PS transition for connected sta
@@ -3844,6 +3853,7 @@ static inline void ieee80211_rx_ni(struct ieee80211_hw *hw,
  */
 int ieee80211_sta_ps_transition(struct ieee80211_sta *sta, bool start);
 
+#if DISABLED_CODE
 /**
  * ieee80211_sta_ps_transition_ni - PS transition for connected sta
  *                                  (in process context)
@@ -3868,6 +3878,7 @@ static inline int ieee80211_sta_ps_transition_ni(struct ieee80211_sta *sta,
 
 	return ret;
 }
+#endif // DISABLED_CODE
 
 /*
  * The TX headroom reserved by mac80211 for its own tx_status functions.
@@ -3964,6 +3975,7 @@ void ieee80211_tx_status_noskb(struct ieee80211_hw *hw,
 			       struct ieee80211_sta *sta,
 			       struct ieee80211_tx_info *info);
 
+#if DISABLED_CODE
 /**
  * ieee80211_tx_status_ni - transmit status callback (in process context)
  *
@@ -3983,6 +3995,7 @@ static inline void ieee80211_tx_status_ni(struct ieee80211_hw *hw,
 	ieee80211_tx_status(hw, skb);
 	local_bh_enable();
 }
+#endif // DISABLED_CODE
 
 /**
  * ieee80211_tx_status_irqsafe - IRQ-safe transmit status callback
@@ -4321,6 +4334,7 @@ ieee80211_get_buffered_bc(struct ieee80211_hw *hw, struct ieee80211_vif *vif);
 void ieee80211_get_tkip_p1k_iv(struct ieee80211_key_conf *keyconf,
 			       u32 iv32, u16 *p1k);
 
+#if DISABLED_CODE
 /**
  * ieee80211_get_tkip_p1k - get a TKIP phase 1 key
  *
@@ -4341,6 +4355,7 @@ static inline void ieee80211_get_tkip_p1k(struct ieee80211_key_conf *keyconf,
 
 	ieee80211_get_tkip_p1k_iv(keyconf, iv32, p1k);
 }
+#endif // DISABLED_CODE
 
 /**
  * ieee80211_get_tkip_rx_p1k - get a TKIP phase 1 key for RX

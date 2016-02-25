@@ -1,7 +1,7 @@
 #include "AppleIntelWiFiMVM.h"
 //extern "C" {
 //#include "linux/linux-porting.h"
-//#include "linux/device-list.h"
+#include "device-list.h"
 //}
 
 #define super IOService
@@ -109,9 +109,9 @@ void AppleIntelWiFiMVM::free() {
 
 const struct iwl_cfg *AppleIntelWiFiMVM::identifyWiFiCard(UInt16 device, UInt16 subdevice) {
     UInt32 i;
-    for(i=0; i<sizeof(wifi_card_ids) / sizeof(wifi_card); i++) {
-        if(wifi_card_ids[i].device == device && wifi_card_ids[i].subdevice == subdevice)
-            return wifi_card_ids[i].config;
+    for(i=0; i<sizeof(iwl_hw_card_ids) / sizeof(pci_device_id); i++) {
+        if(iwl_hw_card_ids[i].device == device && iwl_hw_card_ids[i].subdevice == subdevice)
+            return (iwl_cfg *)iwl_hw_card_ids[i].driver_data;
     }
     
     return NULL;
