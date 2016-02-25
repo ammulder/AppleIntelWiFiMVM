@@ -17,7 +17,7 @@ This driver is still in the "can it be done?" stage.
 
 As of this writing the driver recognizes the appropriate hardware and loads a matching firmware file, but does not yet send the firmware to the hardware.
 
-Now I'm in the process of trying to get all the Linux driver code to build on Mac OS X.  This will be a very long process.  Work is happening on the "Porting" branch, but it will probably be a long time before all the source even compiles again.
+Now I'm in the process of trying to get all the Linux driver code to build on Mac OS X.  This will be a very long process.  Work is currently happening on the "Porting" branch, but only a small subset of the code even compiles right now.
 
 Long story short, __this driver does not yet actually connect to wireless networks__.
 
