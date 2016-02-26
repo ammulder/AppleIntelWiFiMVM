@@ -67,6 +67,8 @@
 #if DISABLED_CODE
 #include <linux/export.h>
 #endif
+#include "iwl-fw.h"
+#include "iwl-fw-file.h"
 
 // ------- ammulder moved in from .c file ------
 #define UCODE_EXPERIMENTAL_INDEX	100

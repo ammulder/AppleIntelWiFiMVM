@@ -11,14 +11,13 @@
 
 #include <IOKit/IOLib.h>
 #include <IOKit/IOService.h>
-//#include <IOKit/pci/IOPCIDevice.h>
-//#include <libkern/OSKextLib.h>
+extern "C" {
 #include "iwl-config.h"
 #include "iwl-agn-hw.h"
 #include "iwl-fw.h"
 #include "iwl-drv.h"
 #include "iwl-debug.h"
-
+}
 
 class FirmwareParser : public OSObject {
     OSDeclareDefaultStructors(FirmwareParser);
@@ -34,9 +33,6 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
                                   OSData *ucode_raw,
                                   struct iwl_firmware_pieces *pieces,
                                   struct iwl_ucode_capabilities *capa);
-//static int validate_sec_sizes(struct iwl_drv *drv,
-//                              struct iwl_firmware_pieces *pieces,
-//                              const struct iwl_cfg *cfg);
 static int iwl_alloc_ucode(struct iwl_drv *drv,
                            struct iwl_firmware_pieces *pieces,
                            enum iwl_ucode_type type);

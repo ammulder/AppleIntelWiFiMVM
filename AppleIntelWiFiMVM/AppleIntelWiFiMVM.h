@@ -15,7 +15,9 @@ public:
 
 private:
     // --------------- Methods ---------------
-    const struct iwl_cfg *identifyWiFiCard(UInt16 device, UInt16 subdevice);
+    const struct iwl_cfg *identifyWiFiCard();
+    struct iwl_trans *allocatePCIeTransport(const struct iwl_cfg *cfg);
+
     bool startFirmware(const struct iwl_cfg *device, struct iwl_trans *trans);
     void stopFirmware();
     OSData* loadFirmwareSync(struct iwl_drv *drv, const struct iwl_cfg *device);

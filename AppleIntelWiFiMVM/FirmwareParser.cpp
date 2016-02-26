@@ -7,7 +7,6 @@
 //
 
 #include "FirmwareParser.h"
-#include "linux/iwl-fw-error-dump.h"
 #include <libkern/libkern.h>
 
 #define super OSObject
@@ -373,7 +372,7 @@ static int iwl_store_ucode_sec(struct iwl_firmware_pieces *pieces,
     
     img = &pieces->img[type];
     if(img->sec_counter < 0 || img->sec_counter >= IWL_UCODE_SECTION_MAX) {
-        IOLog("%s iwl_store_ucode_sec BAD COUNTER %d", "AppleIntelWiFiMVM", img->sec_counter);
+        IOLog("%s iwl_store_ucode_sec BAD COUNTER %d\n", "AppleIntelWiFiMVM", img->sec_counter);
         return -1;
     }
         
@@ -509,8 +508,15 @@ static int iwl_store_gscan_capa(struct iwl_fw *fw, const u8 *data,
     return 0;
 }
 
-
-
+#if DISABLED_CODE  // just for debugging my own load failures
+static void check_pieces(struct iwl_firmware_pieces *pieces) {
+    IOLog("%s Checking pieces\n", "AppleIntelWiFiMVM");
+    IOLog("%s REGULAR sections %d\n", "AppleIntelWiFiMVM", pieces->img[IWL_UCODE_REGULAR].sec_counter);
+    IOLog("%s INIT sections %d\n", "AppleIntelWiFiMVM", pieces->img[IWL_UCODE_INIT].sec_counter);
+    IOLog("%s WOWLAN sections %d\n", "AppleIntelWiFiMVM", pieces->img[IWL_UCODE_WOWLAN].sec_counter);
+    IOLog("%s USNIFFER sections %d\n", "AppleIntelWiFiMVM", pieces->img[IWL_UCODE_REGULAR_USNIFFER].sec_counter);
+}
+#endif // DISABLED_CODE
 
 static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
                                   OSData *ucode_raw,
@@ -531,7 +537,8 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
     bool usniffer_images = false;
     bool usniffer_req = false;
     bool gscan_capa = false;
-    
+
+
 //    if (len < sizeof(*ucode)) {
 //        IWL_ERR(drv, "uCode has invalid length: %zd\n", len);
 //        return -EINVAL;
@@ -1026,55 +1033,6 @@ tlv_error:
     return -EINVAL;
 }
 
-static int validate_sec_sizes(struct iwl_drv *drv,
-                              struct iwl_firmware_pieces *pieces,
-                              const struct iwl_cfg *cfg)
-{
-    IWL_DEBUG_INFO(drv, "f/w package hdr runtime inst size = %zd\n",
-                   get_sec_size(pieces, IWL_UCODE_REGULAR,
-                                IWL_UCODE_SECTION_INST));
-    IWL_DEBUG_INFO(drv, "f/w package hdr runtime data size = %zd\n",
-                   get_sec_size(pieces, IWL_UCODE_REGULAR,
-                                IWL_UCODE_SECTION_DATA));
-    IWL_DEBUG_INFO(drv, "f/w package hdr init inst size = %zd\n",
-                   get_sec_size(pieces, IWL_UCODE_INIT, IWL_UCODE_SECTION_INST));
-    IWL_DEBUG_INFO(drv, "f/w package hdr init data size = %zd\n",
-                   get_sec_size(pieces, IWL_UCODE_INIT, IWL_UCODE_SECTION_DATA));
-    
-    /* Verify that uCode images will fit in card's SRAM. */
-    if (get_sec_size(pieces, IWL_UCODE_REGULAR, IWL_UCODE_SECTION_INST) >
-        cfg->max_inst_size) {
-        IWL_ERR(drv, "uCode instr len %zd too large to fit in\n",
-                get_sec_size(pieces, IWL_UCODE_REGULAR,
-                             IWL_UCODE_SECTION_INST));
-        return -1;
-    }
-    
-    if (get_sec_size(pieces, IWL_UCODE_REGULAR, IWL_UCODE_SECTION_DATA) >
-        cfg->max_data_size) {
-        IWL_ERR(drv, "uCode data len %zd too large to fit in\n",
-                get_sec_size(pieces, IWL_UCODE_REGULAR,
-                             IWL_UCODE_SECTION_DATA));
-        return -1;
-    }
-    
-    if (get_sec_size(pieces, IWL_UCODE_INIT, IWL_UCODE_SECTION_INST) >
-        cfg->max_inst_size) {
-        IWL_ERR(drv, "uCode init instr len %zd too large to fit in\n",
-                get_sec_size(pieces, IWL_UCODE_INIT,
-                             IWL_UCODE_SECTION_INST));
-        return -1;
-    }
-    
-    if (get_sec_size(pieces, IWL_UCODE_INIT, IWL_UCODE_SECTION_DATA) >
-        cfg->max_data_size) {
-        IWL_ERR(drv, "uCode init data len %zd too large to fit in\n",
-                get_sec_size(pieces, IWL_UCODE_REGULAR,
-                             IWL_UCODE_SECTION_DATA));
-        return -1;
-    }
-    return 0;
-}
 
 static int iwl_alloc_fw_desc(struct iwl_drv *drv, struct fw_desc *desc,
                              struct fw_sec *sec)

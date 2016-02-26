@@ -527,7 +527,7 @@ ieee80211_chandef_rate_flags(struct cfg80211_chan_def *chandef)
 	default:
 		break;
 	}
-	return (ieee80211_rate_flags)0;
+	return (enum ieee80211_rate_flags)0;
 }
 
 /**
@@ -5361,6 +5361,7 @@ void cfg80211_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info);
 
 #define wiphy_printk(level, wiphy, format, args...)		\
 	dev_printk(level, &(wiphy)->dev, format, ##args)
+#if DISABLED_CODE
 #define wiphy_emerg(wiphy, format, args...)			\
 	dev_emerg(&(wiphy)->dev, format, ##args)
 #define wiphy_alert(wiphy, format, args...)			\
@@ -5381,7 +5382,7 @@ void cfg80211_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info);
 
 #define wiphy_dbg(wiphy, format, args...)			\
 	dev_dbg(&(wiphy)->dev, format, ##args)
-
+#endif // DISABLED_CODE
 #if defined(VERBOSE_DEBUG)
 #define wiphy_vdbg	wiphy_dbg
 #else

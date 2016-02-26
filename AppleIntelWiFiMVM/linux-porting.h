@@ -31,8 +31,17 @@
 #define __bitwise__             __attribute__((bitwise))
 #define __force                 //__attribute__((force))              DOESN'T CURRENTLY WORK
 #define __must_check            __attribute__((warn_unused_result))
+#ifdef __CHECKER__ // The OS X compiler doesn't like this __context__ business so I leave it disabled for now
 #define __acquires(x)           __attribute__((context(x,0,1)))
 #define __releases(x)           __attribute__((context(x,1,0)))
+#define __acquire(x)            __context__(x,1)
+#define __release(x)            __context__(x,-1)
+#else
+#define __acquires(x)
+#define __releases(x)
+#define __acquire(x) (void)0
+#define __release(x) (void)0
+#endif
 
 // ammulder: these are things I've added where I'm unsure as to the
 //           wisdom of what I'm doing, but I'd like the code to please compile :)
@@ -199,7 +208,7 @@ static inline int atomic_inc_and_test(volatile SInt32 * addr)
 #define atomic_dec(v) OSDecrementAtomic(v)
 
 static inline int
-test_bit(int nr, const volatile unsigned long *addr)
+test_bit(long nr, const volatile unsigned long *addr)
 {
     return (OSAddAtomic(0, addr) & (1 << nr)) != 0;
 }
@@ -359,8 +368,6 @@ struct pci_dev {
     UInt16 maxNoSnoop;
     UInt8 revision;
 };
-
-#define dev_err(x,y,z)
 
 /**
  * is_zero_ether_addr - Determine if give Ethernet address is all zeros.

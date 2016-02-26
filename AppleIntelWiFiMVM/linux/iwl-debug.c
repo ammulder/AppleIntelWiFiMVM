@@ -65,12 +65,15 @@
 #include <linux/device.h>
 #include <linux/interrupt.h>
 #include <linux/export.h>
-#endif
+#endif // DISABLED_CODE
 #include "linux-porting.h"
 #include "iwl-drv.h"
 #include "iwl-debug.h"
+#if DISABLED_CODE
 #include "iwl-devtrace.h"
+#endif // DISABLED_CODE
 
+#if DISABLED_CODE  // Don't want to try to hook into Linux printk API
 #define __iwl_fn(fn)						\
 void __iwl_ ##fn(struct device *dev, const char *fmt, ...)	\
 {								\
@@ -113,6 +116,46 @@ void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only,
 	va_end(args);
 }
 IWL_EXPORT_SYMBOL(__iwl_err);
+#endif //DISABLED_CODE
+
+void __iwl_info(struct device *dev, const char *fmt, ...) {
+    char buffer[200] = "AppleIntelWiFiMVM INFO ";
+    char *remainder = &buffer[23];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(remainder, 177, fmt, args);
+    va_end(args);
+    IOLog(buffer);
+}
+void __iwl_crit(struct device *dev, const char *fmt, ...) {
+    char buffer[200] = "AppleIntelWiFiMVM CRIT ";
+    char *remainder = &buffer[23];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(remainder, 177, fmt, args);
+    va_end(args);
+    IOLog(buffer);
+}
+void __iwl_warn(struct device *dev, const char *fmt, ...) {
+    char buffer[200] = "AppleIntelWiFiMVM WARN ";
+    char *remainder = &buffer[23];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(remainder, 177, fmt, args);
+    va_end(args);
+    IOLog(buffer);
+}
+void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only, const char *fmt, ...) {
+    char buffer[200];
+    snprintf(buffer, 24, rfkill_prefix ? "AppleIntelWiFiMVM RFKE " : "AppleIntelWiFiMVM  ERR ");
+    char *remainder = &buffer[23];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(remainder, 177, fmt, args);
+    va_end(args);
+    IOLog(buffer);
+}
+
 
 #if defined(CONFIG_IWLWIFI_DEBUG) || defined(CONFIG_IWLWIFI_DEVICE_TRACING)
 void __iwl_dbg(struct device *dev,

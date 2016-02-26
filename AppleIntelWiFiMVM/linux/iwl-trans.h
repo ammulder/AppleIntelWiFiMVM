@@ -344,6 +344,7 @@ struct iwl_host_cmd {
 	u8 dataflags[IWL_MAX_CMD_TBS_PER_TFD];
 };
 
+#if DISABLED_CODE // Need to handle get_page/free_page and etc.
 static inline void iwl_free_resp(struct iwl_host_cmd *cmd)
 {
 	free_pages(cmd->_rx_page_addr, cmd->_rx_page_order);
@@ -378,6 +379,7 @@ static inline void iwl_free_rxb(struct iwl_rx_cmd_buffer *r)
 {
 	__free_pages(r->_page, r->_rx_page_order);
 }
+#endif // DISABLED_CODE
 
 #define MAX_NO_RECLAIM_CMDS	6
 
@@ -871,6 +873,7 @@ iwl_trans_dump_data(struct iwl_trans *trans,
 	return trans->ops->dump_data(trans, trigger);
 }
 
+#if DISABLED_CODE // Need to resolve lock_map_* and kmem_cache_* to allow these back in
 static inline int iwl_trans_send_cmd(struct iwl_trans *trans,
 				     struct iwl_host_cmd *cmd)
 {
@@ -918,7 +921,7 @@ static inline void iwl_trans_free_tx_cmd(struct iwl_trans *trans,
 
 	kmem_cache_free(trans->dev_cmd_pool, dev_cmd_ptr);
 }
-
+#endif // DISABLED_CODE
 static inline int iwl_trans_tx(struct iwl_trans *trans, struct sk_buff *skb,
 			       struct iwl_device_cmd *dev_cmd, int queue)
 {
@@ -965,9 +968,9 @@ static inline void iwl_trans_txq_enable(struct iwl_trans *trans, int queue,
 					unsigned int queue_wdg_timeout)
 {
 	struct iwl_trans_txq_scd_cfg cfg = {
-		.fifo = fifo,
-		.sta_id = sta_id,
-		.tid = tid,
+		.fifo = (u8)fifo,
+		.sta_id = (s8)sta_id,
+		.tid = (u8)tid,
 		.frame_limit = frame_limit,
 		.aggregate = sta_id >= 0,
 	};
@@ -980,7 +983,7 @@ void iwl_trans_ac_txq_enable(struct iwl_trans *trans, int queue, int fifo,
 			     unsigned int queue_wdg_timeout)
 {
 	struct iwl_trans_txq_scd_cfg cfg = {
-		.fifo = fifo,
+		.fifo = (u8)fifo,
 		.sta_id = -1,
 		.tid = IWL_MAX_TID_COUNT,
 		.frame_limit = IWL_FRAME_LIMIT,

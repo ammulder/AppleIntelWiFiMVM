@@ -9,6 +9,11 @@
 
 #import "linux-porting.h"
 
+// =================== FROM include/linux/printk.h ==================
+struct va_format {
+	const char *fmt;
+	va_list *va;
+};
 // =================== FROM include/linux/netdevice.h ==================
 #define	NETDEV_ALIGN		32
 
@@ -16,7 +21,7 @@
 #define PCI_VENDOR_ID_INTEL             0x8086
 
 // =================== FROM /include/linux/mod_devicetable.h ==================
-#define PCI_ANY_ID (~0)
+#define PCI_ANY_ID 0xFFFFFFFF
 typedef unsigned long kernel_ulong_t;
 struct pci_device_id {
     __u32 vendor, device;           /* Vendor and device ID or PCI_ANY_ID*/

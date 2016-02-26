@@ -48,6 +48,7 @@
 		A2FCD5BA06A04C649C4FD472 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDCD49E47017EB368BBE0 /* internal.h */; };
 		A2FCD5D25629F558DED4543E /* iwl-nvm-parse.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD525FD212BB738568150 /* iwl-nvm-parse.h */; };
 		A2FCD70FE41BF5B9569440DA /* iwl-fh.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD23669C1ABD16F6C6A0D /* iwl-fh.h */; };
+		A2FCD72945A9E2F9A27D743F /* iwl-debug.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD30C3FEF19F4C1D104D9 /* iwl-debug.c */; };
 		A2FCD7C772A2598E0AB272F1 /* errno.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDA5CBE476678ECB01ACB /* errno.h */; };
 		A2FCD872F3C76C511791895B /* iwl-op-mode.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCDBCDC159E47BD33E1055 /* iwl-op-mode.h */; };
 		A2FCD8C7310AD04B4CC6524C /* iwl-devtrace-data.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD42224E4A750766564DB /* iwl-devtrace-data.h */; };
@@ -548,6 +549,7 @@
 				843096631C70CE6F0020E454 /* FirmwareParser.cpp in Sources */,
 				84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */,
 				847F26CA1C6EA2870007A5B0 /* FirmwareLoader.cpp in Sources */,
+				A2FCD72945A9E2F9A27D743F /* iwl-debug.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
