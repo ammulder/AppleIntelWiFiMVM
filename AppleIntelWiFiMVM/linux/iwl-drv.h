@@ -106,8 +106,8 @@ struct iwl_drv {
 
 #ifdef CONFIG_IWLWIFI_DEBUGFS
     struct dentry *dbgfs_drv;
-	struct dentry *dbgfs_trans;
-	struct dentry *dbgfs_op_mode;
+    struct dentry *dbgfs_trans;
+    struct dentry *dbgfs_op_mode;
 #endif
 };
 
