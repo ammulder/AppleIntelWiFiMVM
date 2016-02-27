@@ -74,6 +74,9 @@
 #define UCODE_EXPERIMENTAL_INDEX	100
 #define UCODE_EXPERIMENTAL_TAG		"exp"
 #define IWL_DEFAULT_SCAN_CHANNELS 40
+
+bool iwl_req_fw_callback(void *raw, size_t len, void *context);
+
 /**
  * struct iwl_drv - drv common data
  * @list: list of drv structures using this opmode
@@ -158,6 +161,8 @@ struct iwl_firmware_pieces {
     struct iwl_fw_dbg_trigger_tlv *dbg_trigger_tlv[FW_DBG_TRIGGER_MAX];
     size_t dbg_trigger_tlv_len[FW_DBG_TRIGGER_MAX];
 };
+
+void iwl_dealloc_ucode(struct iwl_drv *drv);
 // ------- end ammulder moved in from .c file ------
 
 /* for all modules */

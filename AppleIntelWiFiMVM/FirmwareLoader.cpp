@@ -128,7 +128,7 @@ bool AppleIntelWiFiMVM::startFirmware(const struct iwl_cfg *device, struct iwl_t
     else IOLog("%s Firmware parse failed :(\n", MYNAME);
     RELEASE(fwData)
 
-    return true;
+    return result;
     
 //err_fw:
 //#ifdef CONFIG_IWLWIFI_DEBUGFS

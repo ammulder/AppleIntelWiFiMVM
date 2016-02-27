@@ -48,6 +48,10 @@
 //           wisdom of what I'm doing, but I'd like the code to please compile :)
 static inline void might_sleep() {} // Used for debugging to barf if called in interrupt context
 
+// ammulder: not relevant to OS X
+#define __init
+#define __exit
+
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
 
@@ -58,8 +62,14 @@ static inline void might_sleep() {} // Used for debugging to barf if called in i
 /******************************************************************************/
 
 #define printk(args...) IOLog(args)
-#define WARN(test, message) check_warn_condition(test, message)
-#define WARN_ON(x) x
+#define WARN(test, message) porting_check_warning(test, message)
+#define WARN_ON(condition) ({                                           \
+    int __ret_warn_on = !!(condition);                              \
+    if (unlikely(__ret_warn_on))                                    \
+        porting_print_warning("at %s:%d/%s()!\n", __FILE__, __LINE__, __func__);  \
+    unlikely(__ret_warn_on);                                        \
+})
+
 #define WARN_ON_ONCE(x) x
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition ? 1 : 0)]))
 #define __rcu
@@ -76,9 +86,18 @@ static inline void * __must_check ERR_PTR(long error) {
 static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr) {
     return !ptr || IS_ERR_VALUE((unsigned long)ptr);
 }
-static bool check_warn_condition(bool test, char *message) {
+static bool porting_check_warning(bool test, char *message) {
     if(test) IOLog("%s %s", "AppleIntelWiFiMVM", message);
     return test;
+}
+static void porting_print_warning(char *fmt, ...) {
+    char buffer[200] = "AppleIntelWiFiMVM ERROR ";
+    char *remainder = &buffer[24];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(remainder, 176, fmt, args);
+    va_end(args);
+    IOLog(buffer);
 }
 
 /******************************************************************************/
@@ -134,8 +153,9 @@ static bool check_warn_condition(bool test, char *message) {
 #define le32_to_cpu(x) OSSwapLittleToHostInt32(x)
 #define le64_to_cpu(x) OSSwapLittleToHostInt64(x)
 
-// ammulder
-#define le16_to_cpup(x) (int *)OSSwapLittleToHostInt16(x)
+// ammulder: dereference the pointer then swap bytes
+#define le16_to_cpup(x) OSSwapLittleToHostInt16((*x))
+#define le32_to_cpup(x) OSSwapLittleToHostInt32((*x))
 
 #define cpu_to_be16(x) OSSwapHostToBigInt16(x)
 #define cpu_to_be32(x) OSSwapHostToBigInt32(x)
@@ -425,9 +445,9 @@ static inline bool is_valid_ether_addr(const u8 *addr)
 #define e_warn(format, arg...)
 #define e_notice(format, arg...)
 
-#define	DEFINE_MUTEX(x)	void x##_dummy(){}
-#define	mutex_lock(x)
-#define	mutex_unlock(x)
+//#define	DEFINE_MUTEX(x)	void x##_dummy(){}
+//#define	mutex_lock(x)
+//#define	mutex_unlock(x)
 
 // ammulder: this was from the Ethernet driver, TODO: change to the wireless iwl_drv or something?
 //#define net_device e1000_adapter

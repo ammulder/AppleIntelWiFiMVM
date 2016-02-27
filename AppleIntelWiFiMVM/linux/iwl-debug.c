@@ -116,7 +116,45 @@ void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only,
 	va_end(args);
 }
 IWL_EXPORT_SYMBOL(__iwl_err);
+
+#if defined(CONFIG_IWLWIFI_DEBUG) || defined(CONFIG_IWLWIFI_DEVICE_TRACING)
+void __iwl_dbg(struct device *dev,
+	       u32 level, bool limit, const char *function,
+	       const char *fmt, ...)
+{
+	struct va_format vaf = {
+		.fmt = fmt,
+	};
+	va_list args;
+
+	va_start(args, fmt);
+	vaf.va = &args;
+#ifdef CONFIG_IWLWIFI_DEBUG
+	if (iwl_have_debug_level(level) &&
+	    (!limit || net_ratelimit()))
+		dev_printk(KERN_DEBUG, dev, "%c %s %pV",
+			   in_interrupt() ? 'I' : 'U', function, &vaf);
+#endif
+	trace_iwlwifi_dbg(level, in_interrupt(), function, &vaf);
+	va_end(args);
+}
+IWL_EXPORT_SYMBOL(__iwl_dbg);
+#endif
 #endif //DISABLED_CODE
+
+void __iwl_dbg(struct device *dev,
+        u32 level, bool limit, const char *function,
+        const char *fmt, ...) {
+    // TODO: maybe something with level and function (caller?)
+    char buffer[200] = "AppleIntelWiFiMVM DBG ";
+    if(limit) return;// TODO: don't skip entirely
+    char *remainder = &buffer[22];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(remainder, 178, fmt, args);
+    va_end(args);
+    IOLog(buffer);
+}
 
 void __iwl_info(struct device *dev, const char *fmt, ...) {
     char buffer[200] = "AppleIntelWiFiMVM INFO ";
@@ -155,28 +193,3 @@ void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only, const ch
     va_end(args);
     IOLog(buffer);
 }
-
-
-#if defined(CONFIG_IWLWIFI_DEBUG) || defined(CONFIG_IWLWIFI_DEVICE_TRACING)
-void __iwl_dbg(struct device *dev,
-	       u32 level, bool limit, const char *function,
-	       const char *fmt, ...)
-{
-	struct va_format vaf = {
-		.fmt = fmt,
-	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
-#ifdef CONFIG_IWLWIFI_DEBUG
-	if (iwl_have_debug_level(level) &&
-	    (!limit || net_ratelimit()))
-		dev_printk(KERN_DEBUG, dev, "%c %s %pV",
-			   in_interrupt() ? 'I' : 'U', function, &vaf);
-#endif
-	trace_iwlwifi_dbg(level, in_interrupt(), function, &vaf);
-	va_end(args);
-}
-IWL_EXPORT_SYMBOL(__iwl_dbg);
-#endif

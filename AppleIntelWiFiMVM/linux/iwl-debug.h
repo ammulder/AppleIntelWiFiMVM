@@ -104,7 +104,7 @@ do {									\
 #define IWL_DEBUG_LIMIT(m, level, fmt, args...)				\
 	__IWL_DEBUG_DEV((m)->dev, level, true, fmt, ##args)
 
-#ifdef CONFIG_IWLWIFI_DEBUG
+#if DISABLED_CODE && defined(CONFIG_IWLWIFI_DEBUG)
 #define iwl_print_hex_dump(m, level, p, len)				\
 do {                                            			\
 	if (iwl_have_debug_level(level))				\

@@ -80,6 +80,8 @@
 #include "iwl-fw.h"
 #include "iwl-config.h"
 #include "iwl-modparams.h"
+#include <IOKit/IOLocks.h>
+#include <sys/malloc.h>
 
 /******************************************************************************
  *
@@ -138,11 +140,13 @@ enum {
 };
 
 /* Protects the table contents, i.e. the ops pointer & drv list */
-static struct mutex iwlwifi_opmode_table_mtx;
+static IOLock* iwlwifi_opmode_table_mtx;
 static struct iwlwifi_opmode_table {
 	const char *name;			/* name: iwldvm, iwlmvm, etc */
 	const struct iwl_op_mode_ops *ops;	/* pointer to op_mode ops */
+#if DISABLED_CODE
 	struct list_head drv;		/* list of devices using this op_mode */
+#endif
 } iwlwifi_opmode_table[2] = {		/* ops set when driver is initialized */
 	[DVM_OP_MODE] = { .name = "iwldvm", .ops = NULL },
 	[MVM_OP_MODE] = { .name = "iwlmvm", .ops = NULL },
@@ -163,7 +167,7 @@ struct fw_sec {
 
 static void iwl_free_fw_desc(struct iwl_drv *drv, struct fw_desc *desc)
 {
-	vfree(desc->data);
+	FREE(desc->data, M_TEMP);
 	desc->data = NULL;
 	desc->len = 0;
 }
@@ -175,15 +179,15 @@ static void iwl_free_fw_img(struct iwl_drv *drv, struct fw_img *img)
 		iwl_free_fw_desc(drv, &img->sec[i]);
 }
 
-static void iwl_dealloc_ucode(struct iwl_drv *drv)
+void iwl_dealloc_ucode(struct iwl_drv *drv)
 {
 	int i;
 
-	kfree(drv->fw.dbg_dest_tlv);
+	FREE(drv->fw.dbg_dest_tlv, M_TEMP);
 	for (i = 0; i < ARRAY_SIZE(drv->fw.dbg_conf_tlv); i++)
-		kfree(drv->fw.dbg_conf_tlv[i]);
+		FREE(drv->fw.dbg_conf_tlv[i], M_TEMP);
 	for (i = 0; i < ARRAY_SIZE(drv->fw.dbg_trigger_tlv); i++)
-		kfree(drv->fw.dbg_trigger_tlv[i]);
+		FREE(drv->fw.dbg_trigger_tlv[i], M_TEMP);
 
 	for (i = 0; i < IWL_UCODE_TYPE_MAX; i++)
 		iwl_free_fw_img(drv, drv->fw.img + i);
@@ -199,7 +203,7 @@ static int iwl_alloc_fw_desc(struct iwl_drv *drv, struct fw_desc *desc,
 	if (!sec || !sec->size)
 		return -EINVAL;
 
-	data = vmalloc(sec->size);
+	MALLOC(data, void *, sec->size, M_TEMP, M_WAITOK);
 	if (!data)
 		return -ENOMEM;
 
@@ -211,14 +215,14 @@ static int iwl_alloc_fw_desc(struct iwl_drv *drv, struct fw_desc *desc,
 	return 0;
 }
 
-static void iwl_req_fw_callback(const struct firmware *ucode_raw,
-				void *context);
-
 #if DISABLED_CODE // Moving to header file
+static bool iwl_req_fw_callback(void *raw, size_t len, void *context);
+
 #define UCODE_EXPERIMENTAL_INDEX	100
 #define UCODE_EXPERIMENTAL_TAG		"exp"
 #endif // DISABLED_CODE
 
+#if DISABLED_CODE // Implemented differently on OS X
 static int iwl_request_firmware(struct iwl_drv *drv, bool first)
 {
 	const char *name_pre = drv->cfg->fw_name_pre;
@@ -265,6 +269,7 @@ static int iwl_request_firmware(struct iwl_drv *drv, bool first)
 				       drv->trans->dev,
 				       GFP_KERNEL, drv, iwl_req_fw_callback);
 }
+#endif // DISABLED_CODE
 
 #if DISABLED_CODE // Moving to header file
 struct fw_img_parsing {
@@ -423,6 +428,11 @@ static int iwl_store_ucode_sec(struct iwl_firmware_pieces *pieces,
 
 	sec_parse = (struct fw_sec_parsing *)data;
 
+    if(img->sec_counter < 0 || img->sec_counter >= IWL_UCODE_SECTION_MAX) {
+        IWL_DEBUG_DEV(NULL, IWL_DL_INFO, "iwl_store_ucode_sec BAD COUNTER %d\n", img->sec_counter);
+        return -1;
+    }
+
 	img = &pieces->img[type];
 	sec = &img->sec[img->sec_counter];
 
@@ -497,6 +507,7 @@ static int iwl_set_ucode_capabilities(struct iwl_drv *drv, const u8 *data,
 	return 0;
 }
 
+#if DISABLED_CODE // Don't need v1/v2 firmware
 static int iwl_parse_v1_v2_firmware(struct iwl_drv *drv,
 				    const struct firmware *ucode_raw,
 				    struct iwl_firmware_pieces *pieces)
@@ -597,15 +608,14 @@ static int iwl_parse_v1_v2_firmware(struct iwl_drv *drv,
 		       IWLAGN_RTC_DATA_LOWER_BOUND);
 	return 0;
 }
-
+#endif // DISABLED_CODE
 static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
-				const struct firmware *ucode_raw,
+				void *ucode_raw, size_t len,
 				struct iwl_firmware_pieces *pieces,
 				struct iwl_ucode_capabilities *capa)
 {
-	struct iwl_tlv_ucode_header *ucode = (void *)ucode_raw->data;
+	struct iwl_tlv_ucode_header *ucode = ucode_raw;
 	struct iwl_ucode_tlv *tlv;
-	size_t len = ucode_raw->size;
 	const u8 *data;
 	u32 tlv_len;
 	u32 usniffer_img;
@@ -618,11 +628,12 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 	bool usniffer_req = false;
 	bool gscan_capa = false;
 
+#if DISABLED_CODE // Both values came from the same place
 	if (len < sizeof(*ucode)) {
 		IWL_ERR(drv, "uCode has invalid length: %zd\n", len);
 		return -EINVAL;
 	}
-
+#endif
 	if (ucode->magic != cpu_to_le32(IWL_TLV_UCODE_MAGIC)) {
 		IWL_ERR(drv, "invalid uCode magic: 0X%x\n",
 			le32_to_cpu(ucode->magic));
@@ -654,9 +665,16 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 
 	len -= sizeof(*ucode);
 
+    const u8 *start = data;
+    size_t delta;
+
+    IWL_DEBUG_INFO(drv, "Starting firmware parse...\n");
+
 	while (len >= sizeof(*tlv)) {
 		len -= sizeof(*tlv);
 		tlv = (void *)data;
+        delta = 88+(data-start);
+        IOSleep(200);
 
 		tlv_len = le32_to_cpu(tlv->length);
 		tlv_type = le32_to_cpu(tlv->type);
@@ -672,6 +690,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 
 		switch (tlv_type) {
 		case IWL_UCODE_TLV_INST:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_INST\n", delta, tlv_type);
 			set_sec_data(pieces, IWL_UCODE_REGULAR,
 				     IWL_UCODE_SECTION_INST, tlv_data);
 			set_sec_size(pieces, IWL_UCODE_REGULAR,
@@ -681,6 +700,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				       IWLAGN_RTC_INST_LOWER_BOUND);
 			break;
 		case IWL_UCODE_TLV_DATA:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_DATA\n", delta, tlv_type);
 			set_sec_data(pieces, IWL_UCODE_REGULAR,
 				     IWL_UCODE_SECTION_DATA, tlv_data);
 			set_sec_size(pieces, IWL_UCODE_REGULAR,
@@ -690,6 +710,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				       IWLAGN_RTC_DATA_LOWER_BOUND);
 			break;
 		case IWL_UCODE_TLV_INIT:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_INIT\n", delta, tlv_type);
 			set_sec_data(pieces, IWL_UCODE_INIT,
 				     IWL_UCODE_SECTION_INST, tlv_data);
 			set_sec_size(pieces, IWL_UCODE_INIT,
@@ -699,6 +720,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				       IWLAGN_RTC_INST_LOWER_BOUND);
 			break;
 		case IWL_UCODE_TLV_INIT_DATA:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_INIT_DATA\n", delta, tlv_type);
 			set_sec_data(pieces, IWL_UCODE_INIT,
 				     IWL_UCODE_SECTION_DATA, tlv_data);
 			set_sec_size(pieces, IWL_UCODE_INIT,
@@ -708,20 +730,24 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				       IWLAGN_RTC_DATA_LOWER_BOUND);
 			break;
 		case IWL_UCODE_TLV_BOOT:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_BOOT\n", delta, tlv_type);
 			IWL_ERR(drv, "Found unexpected BOOT ucode\n");
 			break;
 		case IWL_UCODE_TLV_PROBE_MAX_LEN:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_PROBE_MAX_LEN\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			capa->max_probe_length =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_PAN:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_PAN\n", delta, tlv_type);
 			if (tlv_len)
 				goto invalid_tlv_len;
 			capa->flags |= IWL_UCODE_TLV_FLAGS_PAN;
 			break;
 		case IWL_UCODE_TLV_FLAGS:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_FLAGS\n", delta, tlv_type);
 			/* must be at least one u32 */
 			if (tlv_len < sizeof(u32))
 				goto invalid_tlv_len;
@@ -738,59 +764,69 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 			capa->flags = le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_API_CHANGES_SET:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_API_CHANGES_SET\n", delta, tlv_type);
 			if (tlv_len != sizeof(struct iwl_ucode_api))
 				goto invalid_tlv_len;
 			if (iwl_set_ucode_api_flags(drv, tlv_data, capa))
 				goto tlv_error;
 			break;
 		case IWL_UCODE_TLV_ENABLED_CAPABILITIES:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_ENABLED_CAPABILITIES\n", delta, tlv_type);
 			if (tlv_len != sizeof(struct iwl_ucode_capa))
 				goto invalid_tlv_len;
 			if (iwl_set_ucode_capabilities(drv, tlv_data, capa))
 				goto tlv_error;
 			break;
 		case IWL_UCODE_TLV_INIT_EVTLOG_PTR:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_INIT_EVTLOG_PTR\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			pieces->init_evtlog_ptr =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_INIT_EVTLOG_SIZE:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_INIT_EVTLOG_SIZE\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			pieces->init_evtlog_size =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_INIT_ERRLOG_PTR:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_INIT_ERRLOG_PTR\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			pieces->init_errlog_ptr =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_RUNT_EVTLOG_PTR:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_RUNT_EVTLOG_PTR\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			pieces->inst_evtlog_ptr =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_RUNT_EVTLOG_SIZE:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_RUNT_EVTLOG_SIZE\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			pieces->inst_evtlog_size =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_RUNT_ERRLOG_PTR:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_RUNT_ERRLOG_PTR\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			pieces->inst_errlog_ptr =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_ENHANCE_SENS_TBL:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_ENHANCE_SENS_TBL\n", delta, tlv_type);
 			if (tlv_len)
 				goto invalid_tlv_len;
 			drv->fw.enhance_sensitivity_table = true;
 			break;
 		case IWL_UCODE_TLV_WOWLAN_INST:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_WOWLAN_INST\n", delta, tlv_type);
 			set_sec_data(pieces, IWL_UCODE_WOWLAN,
 				     IWL_UCODE_SECTION_INST, tlv_data);
 			set_sec_size(pieces, IWL_UCODE_WOWLAN,
@@ -800,6 +836,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				       IWLAGN_RTC_INST_LOWER_BOUND);
 			break;
 		case IWL_UCODE_TLV_WOWLAN_DATA:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_WOWLAN_DATA\n", delta, tlv_type);
 			set_sec_data(pieces, IWL_UCODE_WOWLAN,
 				     IWL_UCODE_SECTION_DATA, tlv_data);
 			set_sec_size(pieces, IWL_UCODE_WOWLAN,
@@ -809,33 +846,39 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				       IWLAGN_RTC_DATA_LOWER_BOUND);
 			break;
 		case IWL_UCODE_TLV_PHY_CALIBRATION_SIZE:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_PHY_CALIBRATION_SIZE\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			capa->standard_phy_calibration_size =
 					le32_to_cpup((__le32 *)tlv_data);
 			break;
 		 case IWL_UCODE_TLV_SEC_RT:
+             IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SEC_RT\n", delta, tlv_type);
 			iwl_store_ucode_sec(pieces, tlv_data, IWL_UCODE_REGULAR,
 					    tlv_len);
 			drv->fw.mvm_fw = true;
 			break;
 		case IWL_UCODE_TLV_SEC_INIT:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SEC_INIT\n", delta, tlv_type);
 			iwl_store_ucode_sec(pieces, tlv_data, IWL_UCODE_INIT,
 					    tlv_len);
 			drv->fw.mvm_fw = true;
 			break;
 		case IWL_UCODE_TLV_SEC_WOWLAN:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SEC_WOWLAN\n", delta, tlv_type);
 			iwl_store_ucode_sec(pieces, tlv_data, IWL_UCODE_WOWLAN,
 					    tlv_len);
 			drv->fw.mvm_fw = true;
 			break;
 		case IWL_UCODE_TLV_DEF_CALIB:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_DEF_CALIB\n", delta, tlv_type);
 			if (tlv_len != sizeof(struct iwl_tlv_calib_data))
 				goto invalid_tlv_len;
 			if (iwl_set_default_calib(drv, tlv_data))
 				goto tlv_error;
 			break;
 		case IWL_UCODE_TLV_PHY_SKU:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_PHY_SKU\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			drv->fw.phy_config = le32_to_cpup((__le32 *)tlv_data);
@@ -847,21 +890,25 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 						FW_PHY_CFG_RX_CHAIN_POS;
 			break;
 		 case IWL_UCODE_TLV_SECURE_SEC_RT:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SECURE_SEC_RT\n", delta, tlv_type);
 			iwl_store_ucode_sec(pieces, tlv_data, IWL_UCODE_REGULAR,
 					    tlv_len);
 			drv->fw.mvm_fw = true;
 			break;
 		case IWL_UCODE_TLV_SECURE_SEC_INIT:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SECURE_SEC_INIT\n", delta, tlv_type);
 			iwl_store_ucode_sec(pieces, tlv_data, IWL_UCODE_INIT,
 					    tlv_len);
 			drv->fw.mvm_fw = true;
 			break;
 		case IWL_UCODE_TLV_SECURE_SEC_WOWLAN:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SECURE_SEC_WOWLAN\n", delta, tlv_type);
 			iwl_store_ucode_sec(pieces, tlv_data, IWL_UCODE_WOWLAN,
 					    tlv_len);
 			drv->fw.mvm_fw = true;
 			break;
 		case IWL_UCODE_TLV_NUM_OF_CPU:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_NUM_OF_CPU\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			num_of_cpus =
@@ -880,16 +927,19 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 			}
 			break;
 		case IWL_UCODE_TLV_CSCHEME:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_CSCHEME\n", delta, tlv_type);
 			if (iwl_store_cscheme(&drv->fw, tlv_data, tlv_len))
 				goto invalid_tlv_len;
 			break;
 		case IWL_UCODE_TLV_N_SCAN_CHANNELS:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_N_SCAN_CHANNELS\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			capa->n_scan_channels =
 				le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_FW_VERSION: {
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_FW_VERSION\n", delta, tlv_type);
 			__le32 *ptr = (void *)tlv_data;
 			u32 major, minor;
 			u8 local_comp;
@@ -907,6 +957,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 			break;
 			}
 		case IWL_UCODE_TLV_FW_DBG_DEST: {
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_FW_DBG_DEST\n", delta, tlv_type);
 			struct iwl_fw_dbg_dest_tlv *dest = (void *)tlv_data;
 
 			if (pieces->dbg_dest_tlv) {
@@ -928,6 +979,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 			break;
 			}
 		case IWL_UCODE_TLV_FW_DBG_CONF: {
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_FW_DBG_CONF\n", delta, tlv_type);
 			struct iwl_fw_dbg_conf_tlv *conf = (void *)tlv_data;
 
 			if (!pieces->dbg_dest_tlv) {
@@ -962,6 +1014,7 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 			break;
 			}
 		case IWL_UCODE_TLV_FW_DBG_TRIGGER: {
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_FW_DBG_TRIGGER\n", delta, tlv_type);
 			struct iwl_fw_dbg_trigger_tlv *trigger =
 				(void *)tlv_data;
 			u32 trigger_id = le32_to_cpu(trigger->id);
@@ -987,12 +1040,14 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 			break;
 			}
 		case IWL_UCODE_TLV_SEC_RT_USNIFFER:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SEC_RT_USNIFFER\n", delta, tlv_type);
 			usniffer_images = true;
 			iwl_store_ucode_sec(pieces, tlv_data,
 					    IWL_UCODE_REGULAR_USNIFFER,
 					    tlv_len);
 			break;
 		case IWL_UCODE_TLV_PAGING:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_PAGING\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			paging_mem_size = le32_to_cpup((__le32 *)tlv_data);
@@ -1022,18 +1077,20 @@ static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
 				paging_mem_size;
 			break;
 		case IWL_UCODE_TLV_SDIO_ADMA_ADDR:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_SDIO_ADMA_ADDR\n", delta, tlv_type);
 			if (tlv_len != sizeof(u32))
 				goto invalid_tlv_len;
 			drv->fw.sdio_adma_addr =
 				le32_to_cpup((__le32 *)tlv_data);
 			break;
 		case IWL_UCODE_TLV_FW_GSCAN_CAPA:
+            IWL_DEBUG_INFO(drv, "%#10zx %d IWL_UCODE_TLV_FW_GSCAN_CAPA\n", delta, tlv_type);
 			if (iwl_store_gscan_capa(&drv->fw, tlv_data, tlv_len))
 				goto invalid_tlv_len;
 			gscan_capa = true;
 			break;
 		default:
-			IWL_DEBUG_INFO(drv, "unknown TLV: %d\n", tlv_type);
+			IWL_DEBUG_INFO(drv, "%#10zx unknown TLV: %d\n", delta, tlv_type);
 			break;
 		}
 	}
@@ -1184,12 +1241,15 @@ static void _iwl_op_mode_stop(struct iwl_drv *drv)
  * If loaded successfully, copies the firmware into buffers
  * for the card to fetch (via DMA).
  */
-static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
+bool iwl_req_fw_callback(void *raw, size_t len, void *context)
 {
 	struct iwl_drv *drv = context;
 	struct iwl_fw *fw = &drv->fw;
+#if DISABLED_CODE // Only for DVM firmware
 	struct iwl_ucode_header *ucode;
+#endif
 	struct iwlwifi_opmode_table *op;
+    u32 *file_ver;
 	int err;
 	struct iwl_firmware_pieces *pieces;
 	const unsigned int api_max = drv->cfg->ucode_api_max;
@@ -1208,10 +1268,11 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 	if (!api_ok)
 		api_ok = api_max;
 
-	pieces = kzalloc(sizeof(*pieces), GFP_KERNEL);
+    MALLOC(pieces, struct iwl_firmware_pieces *, sizeof (*pieces), M_TEMP, M_ZERO);
 	if (!pieces)
-		return;
+		return false;
 
+#if DISABLED_CODE // Caller handles retries
 	if (!ucode_raw) {
 		if (drv->fw_index <= api_ok)
 			IWL_ERR(drv,
@@ -1219,27 +1280,36 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 				drv->firmware_name);
 		goto try_again;
 	}
-
+#endif
 	IWL_DEBUG_INFO(drv, "Loaded firmware file '%s' (%zd bytes).\n",
-		       drv->firmware_name, ucode_raw->size);
+		       drv->firmware_name, len);
 
 	/* Make sure that we got at least the API version number */
-	if (ucode_raw->size < 4) {
+	if (len < 4) {
 		IWL_ERR(drv, "File size way too small!\n");
-		goto try_again;
+		goto out_unbind;
 	}
 
+    file_ver = (u32 *)raw;
+    if(*file_ver) {
+        IWL_DEBUG_INFO(drv, "Firmeware error: not TLV format! %08x\n", *file_ver);
+        goto out_unbind;
+    }
+#if DISABLED_CODE // Don't support older firmwares
 	/* Data from ucode file:  header followed by uCode images */
 	ucode = (struct iwl_ucode_header *)ucode_raw->data;
 
 	if (ucode->ver)
 		err = iwl_parse_v1_v2_firmware(drv, ucode_raw, pieces);
 	else
-		err = iwl_parse_tlv_firmware(drv, ucode_raw, pieces,
+#endif
+		err = iwl_parse_tlv_firmware(drv, raw, len, pieces,
 					     &fw->ucode_capa);
 
 	if (err)
-		goto try_again;
+		goto out_unbind;
+    IWL_DEBUG_INFO(drv, "Parsed TLV firmware Release: %s\n", drv->fw.fw_version);
+
 
 	if (fw_has_api(&drv->fw.ucode_capa, IWL_UCODE_TLV_API_NEW_VERSION))
 		api_ver = drv->fw.ucode_ver;
@@ -1258,7 +1328,7 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 				"Driver unable to support your firmware API. "
 				"Driver supports v%u, firmware is v%u.\n",
 				api_max, api_ver);
-			goto try_again;
+			goto out_unbind;
 		}
 
 		if (api_ver < api_ok) {
@@ -1275,12 +1345,10 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 		}
 	}
 
-	/*
-	 * In mvm uCode there is no difference between data and instructions
-	 * sections.
-	 */
-	if (!fw->mvm_fw && validate_sec_sizes(drv, pieces, drv->cfg))
-		goto try_again;
+    if (!fw->mvm_fw) {
+        IWL_DEBUG_INFO(drv, "ERROR: this driver only supports MVM firmware\n");
+        goto out_unbind;
+    }
 
 	/* Allocate ucode buffers for card's bus-master loading ... */
 
@@ -1389,7 +1457,7 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 	    IWL_MAX_PHY_CALIBRATE_TBL_SIZE)
 		fw->ucode_capa.standard_phy_calibration_size =
 			IWL_MAX_STANDARD_PHY_CALIBRATE_TBL_SIZE;
-
+#if DISABLED_CODE // TODO: Some of this will need to come back
 	/* We have our copies now, allow OS release its copies */
 	release_firmware(ucode_raw);
 
@@ -1438,9 +1506,11 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 				op->name, err);
 #endif
 	}
-	kfree(pieces);
-	return;
+#endif // DISABLED_CODE
+    FREE(pieces, M_TEMP);
+	return true;
 
+#if DISABLED_CODE // Retries handled elsewhere
  try_again:
 	/* try next, if any */
 	release_firmware(ucode_raw);
@@ -1448,17 +1518,23 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 		goto out_unbind;
 	kfree(pieces);
 	return;
-
+#endif
  out_free_fw:
 	IWL_ERR(drv, "failed to allocate pci memory\n");
 	iwl_dealloc_ucode(drv);
+#if DISABLED_CODE // Not needed for OS X
 	release_firmware(ucode_raw);
+#endif
  out_unbind:
-	kfree(pieces);
+	FREE(pieces, M_TEMP);
+#if DISABLED_CODE
 	complete(&drv->request_firmware_complete);
 	device_release_driver(drv->trans->dev);
+#endif
+    return false;
 }
 
+#if DISABLED_CODE // driver start/stop taken care of elsewhere in OS X
 struct iwl_drv *iwl_drv_start(struct iwl_trans *trans,
 			      const struct iwl_cfg *cfg)
 {
@@ -1542,7 +1618,7 @@ void iwl_drv_stop(struct iwl_drv *drv)
 
 	kfree(drv);
 }
-
+#endif //DISABLED_CODE
 
 /* shared module parameters */
 struct iwl_mod_params iwlwifi_mod_params = {
@@ -1557,6 +1633,7 @@ struct iwl_mod_params iwlwifi_mod_params = {
 };
 IWL_EXPORT_SYMBOL(iwlwifi_mod_params);
 
+#if DISABLED_CODE // Run when a module starts to activate previously-registered hardware.  But we don't separate that.
 int iwl_opmode_register(const char *name, const struct iwl_op_mode_ops *ops)
 {
 	int i;
@@ -1602,7 +1679,9 @@ void iwl_opmode_deregister(const char *name)
 	mutex_unlock(&iwlwifi_opmode_table_mtx);
 }
 IWL_EXPORT_SYMBOL(iwl_opmode_deregister);
+#endif // DISABLED_CODE
 
+#if DISABLED_CODE // Module start and stop functions
 static int __init iwl_drv_init(void)
 {
 	int i;
@@ -1715,3 +1794,4 @@ MODULE_PARM_DESC(power_level,
 module_param_named(fw_monitor, iwlwifi_mod_params.fw_monitor, bool, S_IRUGO);
 MODULE_PARM_DESC(fw_monitor,
 		 "firmware monitor - to debug FW (default: false - needs lots of memory)");
+#endif // DISABLED_CODE

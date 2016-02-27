@@ -13,8 +13,9 @@
 #define super OSObject
 OSDefineMetaClassAndStructors(FirmwareParser, OSObject);
 
-// From iwl-drv.c iwl_req_fw_callback
 bool FirmwareParser::processFirmwareData(OSData *raw, struct iwl_drv *drv) {
+    return iwl_req_fw_callback((void *)raw->getBytesNoCopy(), (size_t)raw->getLength(), (void *)drv);
+#if DISABLED_CODE
     //struct iwl_drv *drv = context;
     struct iwl_fw *fw = &drv->fw;
 //    struct iwl_ucode_header *ucode;  ONLY FOR non-TLV
@@ -304,13 +305,14 @@ out_free_fw:
 //    complete(&drv->request_firmware_complete);
 //    device_release_driver(drv->trans->dev);
     return false;
+#endif
 }
 
 void FirmwareParser::releaseFirmware(struct iwl_drv *drv) {
     if(drv) iwl_dealloc_ucode(drv);
 }
 
-
+#if DISABLED_CODE
 /*
  * These functions are just to extract uCode section data from the pieces
  * structure.
@@ -1099,3 +1101,4 @@ static void iwl_dealloc_ucode(struct iwl_drv *drv)
     for (i = 0; i < IWL_UCODE_TYPE_MAX; i++)
         iwl_free_fw_img(drv, drv->fw.img + i);
 }
+#endif

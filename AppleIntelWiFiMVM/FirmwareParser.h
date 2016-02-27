@@ -28,14 +28,4 @@ public:
     
 //private:
 };
-
-static int iwl_parse_tlv_firmware(struct iwl_drv *drv,
-                                  OSData *ucode_raw,
-                                  struct iwl_firmware_pieces *pieces,
-                                  struct iwl_ucode_capabilities *capa);
-static int iwl_alloc_ucode(struct iwl_drv *drv,
-                           struct iwl_firmware_pieces *pieces,
-                           enum iwl_ucode_type type);
-static void iwl_dealloc_ucode(struct iwl_drv *drv);
-
 #endif /* firmware_h */

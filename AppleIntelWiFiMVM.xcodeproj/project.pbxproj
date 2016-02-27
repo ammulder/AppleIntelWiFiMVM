@@ -23,6 +23,7 @@
 		84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C01A031C6C1F4100408046 /* AppleIntelWiFiMVM.cpp */; };
 		84EF564E1C6D943E00C97EDD /* iwl-7000.h in Headers */ = {isa = PBXBuildFile; fileRef = 84EF564D1C6D943E00C97EDD /* iwl-7000.h */; };
 		84EF56521C6D95C300C97EDD /* iwl-8000.h in Headers */ = {isa = PBXBuildFile; fileRef = 84EF56511C6D95C300C97EDD /* iwl-8000.h */; };
+		A2FCD04C462766095BCFF0DE /* iwl-drv.c in Sources */ = {isa = PBXBuildFile; fileRef = A2FCD03B11100A260CB826A4 /* iwl-drv.c */; };
 		A2FCD070A4FA1846F6DE0753 /* cfg80211.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD99A6EE980BED32931DD /* cfg80211.h */; };
 		A2FCD07AF5F3CDDFF32CAF76 /* iwl-io.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD7BC967256010BF17E48 /* iwl-io.h */; };
 		A2FCD094FB9829150EF00C5A /* ethtool.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FCD467D70681F191FBC3A9 /* ethtool.h */; };
@@ -550,6 +551,7 @@
 				84C01A041C6C1F4100408046 /* AppleIntelWiFiMVM.cpp in Sources */,
 				847F26CA1C6EA2870007A5B0 /* FirmwareLoader.cpp in Sources */,
 				A2FCD72945A9E2F9A27D743F /* iwl-debug.c in Sources */,
+				A2FCD04C462766095BCFF0DE /* iwl-drv.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,6 +644,8 @@
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1.0.0d1;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				INFOPLIST_FILE = AppleIntelWiFiMVM/Info.plist;
 				MODULE_NAME = org.opentools.AppleIntelWiFiMVM;
 				MODULE_VERSION = 1.0.0d1;
@@ -659,6 +663,8 @@
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1.0.0d1;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				INFOPLIST_FILE = AppleIntelWiFiMVM/Info.plist;
 				MODULE_NAME = org.opentools.AppleIntelWiFiMVM;
 				MODULE_VERSION = 1.0.0d1;
