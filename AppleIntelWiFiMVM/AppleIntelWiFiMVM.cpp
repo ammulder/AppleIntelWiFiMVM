@@ -88,7 +88,10 @@ void AppleIntelWiFiMVM::stop(IOService* provider) {
 void AppleIntelWiFiMVM::free() {
     DEBUGLOG("%s::free\n", MYNAME);
     RELEASE(pciDevice);
-    if(driver) IOFree(driver, sizeof(iwl_drv));
+    if(driver) {
+        IOFree(driver, sizeof(*driver));
+        driver = NULL;
+    }
     super::free();
 }
 

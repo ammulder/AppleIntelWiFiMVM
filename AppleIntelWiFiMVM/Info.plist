@@ -40,16 +40,14 @@
 	<string>Copyright © 2016 Aaron Mulder. All rights reserved.</string>
 	<key>OSBundleLibraries</key>
 	<dict>
-		<key>com.apple.kpi.mach</key>
-		<string>9.0.0</string>
+		<key>com.apple.kpi.bsd</key>
+		<string>15.0.0</string>
 		<key>com.apple.kpi.iokit</key>
-		<string>9.0.0</string>
+		<string>15.0.0</string>
 		<key>com.apple.kpi.libkern</key>
-		<string>9.0.0</string>
+		<string>15.0.0</string>
 		<key>com.apple.iokit.IOPCIFamily</key>
 		<string>1.7</string>
-		<key>com.apple.iokit.IONetworkingFamily</key>
-		<string>1.5.0</string>
 	</dict>
 </dict>
 </plist>

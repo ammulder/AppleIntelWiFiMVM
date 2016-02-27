@@ -21,6 +21,7 @@
 #include <libkern/OSAtomic.h>
 #include "linux-config.h"
 #include "headers/errno.h"
+#include <sys/malloc.h>
 
 // ammulder: compiler directives from the Linux sources (e.g. linux/compiler.h, linux/compiler-gcc.h)
 #define __packed                __attribute__((packed))
@@ -462,8 +463,8 @@ static inline unsigned int _kc_ether_crc_le(int length, unsigned char *data)
  * @gfp: GFP mask to use
  */
 static void *kmemdup(const void *src, size_t len, int gfp) {
-    void *p;
-    p = IOMalloc(len);
+    void *p = NULL;
+    MALLOC(p, void *, len, M_TEMP, M_WAITOK);
     if (p)
         memcpy(p, src, len);
     return p;

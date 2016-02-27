@@ -109,11 +109,6 @@ struct iwl_drv {
 	struct dentry *dbgfs_trans;
 	struct dentry *dbgfs_op_mode;
 #endif
-    struct {
-        int dbg_dest_tlv;
-        int dbg_conf_tlv[FW_DBG_CONF_MAX];
-        int dbg_trigger_tlv[FW_DBG_TRIGGER_MAX];
-    } sizes;
 };
 
 /*

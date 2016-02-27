@@ -8,6 +8,7 @@
 
 #include "FirmwareParser.h"
 #include <libkern/libkern.h>
+#include <sys/malloc.h>
 
 #define super OSObject
 OSDefineMetaClassAndStructors(FirmwareParser, OSObject);
@@ -36,8 +37,8 @@ bool FirmwareParser::processFirmwareData(OSData *raw, struct iwl_drv *drv) {
     
     if (!api_ok)
         api_ok = api_max;
-    
-    pieces = (struct iwl_firmware_pieces *)/*kzalloc*/IOMalloc(sizeof(*pieces)/*, GFP_KERNEL*/);
+    MALLOC(pieces, struct iwl_firmware_pieces *, sizeof (*pieces), M_TEMP, M_ZERO);
+    //pieces = (struct iwl_firmware_pieces *)/*kzalloc*/IOMalloc(sizeof(*pieces)/*, GFP_KERNEL*/);
     if (!pieces)
         return false;
     
@@ -283,7 +284,7 @@ bool FirmwareParser::processFirmwareData(OSData *raw, struct iwl_drv *drv) {
 //                    op->name, err);
 //#endif
 //    }
-    IOFree(pieces, sizeof(*pieces));
+    FREE(pieces, M_TEMP);
     return true;
     
 //try_again:
@@ -299,7 +300,7 @@ out_free_fw:
     iwl_dealloc_ucode(drv);
 //    release_firmware(ucode_raw);
 //out_unbind:
-    IOFree(pieces, sizeof(*pieces));
+    FREE(pieces, M_TEMP);
 //    complete(&drv->request_firmware_complete);
 //    device_release_driver(drv->trans->dev);
     return false;
@@ -1043,8 +1044,8 @@ static int iwl_alloc_fw_desc(struct iwl_drv *drv, struct fw_desc *desc,
     
     if (!sec || !sec->size)
         return -EINVAL;
-    
-    data = IOMalloc(sec->size);
+
+    MALLOC(data, void *, sec->size, M_TEMP, M_WAITOK);
     if (!data)
         return -ENOMEM;
     
@@ -1072,7 +1073,7 @@ static int iwl_alloc_ucode(struct iwl_drv *drv,
 
 static void iwl_free_fw_desc(struct iwl_drv *drv, struct fw_desc *desc)
 {
-    IOFree(desc->data, desc->len);
+    FREE(desc->data, M_TEMP);
     desc->data = NULL;
     desc->len = 0;
 }
@@ -1088,12 +1089,12 @@ static void iwl_dealloc_ucode(struct iwl_drv *drv)
 {
     int i;
     
-    if(drv->fw.dbg_dest_tlv) IOFree(drv->fw.dbg_dest_tlv, drv->sizes.dbg_dest_tlv);
+    if(drv->fw.dbg_dest_tlv) FREE(drv->fw.dbg_dest_tlv, M_TEMP);
     for (i = 0; i < ARRAY_SIZE(drv->fw.dbg_conf_tlv); i++)
         if(drv->fw.dbg_conf_tlv[i])
-            IOFree(drv->fw.dbg_conf_tlv[i], drv->sizes.dbg_conf_tlv[i]);
+            FREE(drv->fw.dbg_conf_tlv[i], M_TEMP);
     for (i = 0; i < ARRAY_SIZE(drv->fw.dbg_trigger_tlv); i++)
-        IOFree(drv->fw.dbg_trigger_tlv[i], drv->sizes.dbg_trigger_tlv[i]);
+        FREE(drv->fw.dbg_trigger_tlv[i], M_TEMP);
     
     for (i = 0; i < IWL_UCODE_TYPE_MAX; i++)
         iwl_free_fw_img(drv, drv->fw.img + i);
