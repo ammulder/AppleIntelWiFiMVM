@@ -71,10 +71,6 @@
 #include "iwl-fw-file.h"
 
 // ------- ammulder moved in from .c file ------
-#define UCODE_EXPERIMENTAL_INDEX	100
-#define UCODE_EXPERIMENTAL_TAG		"exp"
-#define IWL_DEFAULT_SCAN_CHANNELS 40
-
 bool iwl_req_fw_callback(void *raw, size_t len, void *context);
 
 /**
@@ -112,54 +108,6 @@ struct iwl_drv {
     struct dentry *dbgfs_trans;
     struct dentry *dbgfs_op_mode;
 #endif
-};
-
-/*
- * struct fw_sec: Just for the image parsing process.
- * For the fw storage we are using struct fw_desc.
- */
-struct fw_sec {
-    const void *data;		/* the sec data */
-    size_t size;			/* section size */
-    u32 offset;			/* offset of writing in the device */
-};
-
-struct fw_img_parsing {
-    struct fw_sec sec[IWL_UCODE_SECTION_MAX];
-    int sec_counter;
-};
-
-/*
- * struct fw_sec_parsing: to extract fw section and it's offset from tlv
- */
-struct fw_sec_parsing {
-    __le32 offset;
-    const u8 data[];
-} __packed;
-
-/**
- * struct iwl_tlv_calib_data - parse the default calib data from TLV
- *
- * @ucode_type: the uCode to which the following default calib relates.
- * @calib: default calibrations.
- */
-struct iwl_tlv_calib_data {
-    __le32 ucode_type;
-    struct iwl_tlv_calib_ctrl calib;
-} __packed;
-
-struct iwl_firmware_pieces {
-    struct fw_img_parsing img[IWL_UCODE_TYPE_MAX];
-
-    u32 init_evtlog_ptr, init_evtlog_size, init_errlog_ptr;
-    u32 inst_evtlog_ptr, inst_evtlog_size, inst_errlog_ptr;
-
-    /* FW debug data parsed for driver usage */
-    struct iwl_fw_dbg_dest_tlv *dbg_dest_tlv;
-    struct iwl_fw_dbg_conf_tlv *dbg_conf_tlv[FW_DBG_CONF_MAX];
-    size_t dbg_conf_tlv_len[FW_DBG_CONF_MAX];
-    struct iwl_fw_dbg_trigger_tlv *dbg_trigger_tlv[FW_DBG_TRIGGER_MAX];
-    size_t dbg_trigger_tlv_len[FW_DBG_TRIGGER_MAX];
 };
 
 void iwl_dealloc_ucode(struct iwl_drv *drv);

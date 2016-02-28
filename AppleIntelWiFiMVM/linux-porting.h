@@ -87,11 +87,11 @@ static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr) {
     return !ptr || IS_ERR_VALUE((unsigned long)ptr);
 }
 static bool porting_check_warning(bool test, char *message) {
-    if(test) IOLog("%s %s", "AppleIntelWiFiMVM", message);
+    if(test) IOLog("%s WARN %s", "AppleIntelWiFiMVM", message);
     return test;
 }
 static void porting_print_warning(char *fmt, ...) {
-    char buffer[200] = "AppleIntelWiFiMVM ERROR ";
+    char buffer[200] = "AppleIntelWiFiMVM FATAL ";
     char *remainder = &buffer[24];
     va_list args;
     va_start(args, fmt);
