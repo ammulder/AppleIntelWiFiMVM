@@ -1281,13 +1281,13 @@ bool iwl_req_fw_callback(void *raw, size_t len, void *context)
 	/* Make sure that we got at least the API version number */
 	if (len < 4) {
 		IWL_ERR(drv, "File size way too small!\n");
-		goto out_unbind;
+		goto try_again;
 	}
 
     file_ver = (u32 *)raw;
     if(*file_ver) {
         IWL_DEBUG_INFO(drv, "Firmeware error: not TLV format! %08x\n", *file_ver);
-        goto out_unbind;
+        goto try_again;
     }
 #if DISABLED_CODE // Don't support older firmwares
 	/* Data from ucode file:  header followed by uCode images */
@@ -1301,7 +1301,7 @@ bool iwl_req_fw_callback(void *raw, size_t len, void *context)
 					     &fw->ucode_capa);
 
 	if (err)
-		goto out_unbind;
+		goto try_again;
     IWL_DEBUG_INFO(drv, "Parsed TLV firmware Release: %s\n", drv->fw.fw_version);
 
 
@@ -1505,7 +1505,6 @@ bool iwl_req_fw_callback(void *raw, size_t len, void *context)
 	return true;
 
 #if DISABLED_CODE // Retries handled elsewhere
- try_again:
 	/* try next, if any */
 	release_firmware(ucode_raw);
 	if (iwl_request_firmware(drv, false))
@@ -1519,6 +1518,7 @@ bool iwl_req_fw_callback(void *raw, size_t len, void *context)
 #if DISABLED_CODE // Not needed for OS X
 	release_firmware(ucode_raw);
 #endif
+ try_again:
  out_unbind:
 	FREE(pieces, M_TEMP);
 #if DISABLED_CODE

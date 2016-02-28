@@ -706,11 +706,12 @@ struct iwl_trans {
 
 	u8 num_rx_queues;
 
+#if DISABLED_CODE // Don't use a memory zone/cache on OS X
 	/* The following fields are internal only */
 	struct kmem_cache *dev_cmd_pool;
 	size_t dev_cmd_headroom;
 	char dev_cmd_pool_name[50];
-
+#endif
 	struct dentry *dbgfs_dir;
 
 #ifdef CONFIG_LOCKDEP

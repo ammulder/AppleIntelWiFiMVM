@@ -65,6 +65,7 @@
 #endif // DISABLED_CODE
 #include "linux-porting.h"
 #include "iwl-trans.h"
+#include <sys/malloc.h>
 
 struct iwl_trans *iwl_trans_alloc(unsigned int priv_size,
 				  struct device *dev,
@@ -77,7 +78,7 @@ struct iwl_trans *iwl_trans_alloc(unsigned int priv_size,
 	static struct lock_class_key __key;
 #endif
 
-	trans = kzalloc(sizeof(*trans) + priv_size, GFP_KERNEL);
+	MALLOC(trans, struct iwl_trans *, sizeof(*trans) + priv_size, M_TEMP, M_ZERO);
 	if (!trans)
 		return NULL;
 
@@ -89,9 +90,10 @@ struct iwl_trans *iwl_trans_alloc(unsigned int priv_size,
 	trans->dev = dev;
 	trans->cfg = cfg;
 	trans->ops = ops;
-	trans->dev_cmd_headroom = dev_cmd_headroom;
 	trans->num_rx_queues = 1;
 
+#if DISABLED_CODE // Don't use a zone/cache on OS X
+    trans->dev_cmd_headroom = dev_cmd_headroom;
 	snprintf(trans->dev_cmd_pool_name, sizeof(trans->dev_cmd_pool_name),
 		 "iwl_cmd_pool:%s", dev_name(trans->dev));
 	trans->dev_cmd_pool =
@@ -103,15 +105,17 @@ struct iwl_trans *iwl_trans_alloc(unsigned int priv_size,
 				  NULL);
 	if (!trans->dev_cmd_pool)
 		goto free;
-
+#endif
 	return trans;
  free:
-	kfree(trans);
+	FREE(trans, M_TEMP);
 	return NULL;
 }
 
 void iwl_trans_free(struct iwl_trans *trans)
 {
+#if DISABLED_CODE // Don't use a zone/cache on OS X
 	kmem_cache_destroy(trans->dev_cmd_pool);
-	kfree(trans);
+#endif
+	FREE(trans, M_TEMP);
 }
