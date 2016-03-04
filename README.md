@@ -23,6 +23,10 @@ Long story short, __this driver does not yet actually connect to wireless networ
 
 If you're interested in helping, it would be great to have more people try test builds just to ensure it accurately identifies all the hardware I don't have on hand to try.
 
+## Development Status
+
+There are notes on [the project wiki](https://github.com/ammulder/AppleIntelWiFiMVM/wiki).  If you're interested in helping out at the code level, that would be super.
+
 ## Loading/Installation
 Typical third-party driver kexts should be installed to /Library/Extensions, but that's not recommended for this driver yet.  Even in this initial work I've managed to craft a bug that crashed my machine when the driver loaded.  If the driver was installed system-wide, that would happen on every boot, which seems rather unfortunate.  So the manual loading process is recommended for now.
 
