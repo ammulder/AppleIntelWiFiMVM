@@ -107,9 +107,11 @@ struct iwl_trans *iwl_trans_alloc(unsigned int priv_size,
 		goto free;
 #endif
 	return trans;
+#if DISABLED_CODE
  free:
 	FREE(trans, M_TEMP);
 	return NULL;
+#endif
 }
 
 void iwl_trans_free(struct iwl_trans *trans)

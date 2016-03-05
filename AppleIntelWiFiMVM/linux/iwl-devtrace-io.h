@@ -27,7 +27,10 @@
 #if !defined(__IWLWIFI_DEVICE_TRACE_IO) || defined(TRACE_HEADER_MULTI_READ)
 #define __IWLWIFI_DEVICE_TRACE_IO
 
+#if DISABLED_CODE
 #include <linux/tracepoint.h>
+#endif
+#include "linux-porting.h"
 
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM iwlwifi_io

@@ -61,11 +61,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/slab.h>
 #include <linux/export.h>
 #include <linux/etherdevice.h>
 #include <linux/pci.h>
+#endif
 #include "iwl-drv.h"
 #include "iwl-modparams.h"
 #include "iwl-nvm-parse.h"

@@ -15,12 +15,16 @@ public:
 
 private:
     // --------------- Methods ---------------
-    const struct iwl_cfg *identifyWiFiCard();
-    struct iwl_trans *allocatePCIeTransport(const struct iwl_cfg *cfg);
+    const struct iwl_cfg *startupIdentifyWiFiCard();
+    struct iwl_trans *startupCreatePCIeTransport(const struct iwl_cfg *cfg);
+    bool startupCreateDriver(const struct iwl_cfg *cfg, struct iwl_trans *trans);
+    bool startupLoadFirmware();
 
-    bool startFirmware(const struct iwl_cfg *device, struct iwl_trans *trans);
-    void stopFirmware();
-    OSData* loadFirmwareSync(struct iwl_drv *drv, const struct iwl_cfg *device);
+    void shutdownStopFirmware();
+    struct iwl_trans* shutdownFreeDriver();
+    void shutdownFreePCIeTransport(struct iwl_trans *trans);
+
+    OSData* loadFirmwareSync(struct iwl_drv *drv);
     static void firmwareLoadComplete( OSKextRequestTag requestTag, OSReturn result, const void *resourceData, uint32_t resourceDataLength, void *context);
     
     // --------------- Structs ---------------

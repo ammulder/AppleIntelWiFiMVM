@@ -62,7 +62,11 @@
 #ifndef __iwl_nvm_parse_h__
 #define __iwl_nvm_parse_h__
 
+#if DISABLED_CODE
 #include <net/cfg80211.h>
+#endif
+#include "linux-porting.h"
+#include "cfg80211.h"
 #include "iwl-eeprom-parse.h"
 
 /**

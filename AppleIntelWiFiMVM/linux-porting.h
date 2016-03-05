@@ -55,6 +55,20 @@ static inline void might_sleep() {} // Used for debugging to barf if called in i
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
 
+// ammulder: taking a big chance on these, but it would save a lot of work!!
+#define list_head       queue_entry
+#define spinlock_t      OSSpinLock
+#define spin_lock(x)    OSSpinLockLock(x)
+#define spin_unlock(x)  OSSpinLockUnlock(x)
+
+#define container_of(ptr, type, member) ({                                 \
+/*const*/ typeof( ((type *)0)->member) *__mptr = (ptr);                    \
+(type *)( (char *)__mptr - offsetof(type,member) );})
+#define container_of2(ptr, type, member) ({                                \
+(type *)( (char *)(ptr) - offsetof(type,member) );})
+
+#define wait_queue_head_t  IOLock *
+
 /******************************************************************************/
 #pragma mark -
 #pragma mark Debugging
@@ -168,9 +182,6 @@ static void porting_print_warning(char *fmt, ...) {
 #define le32_to_cpus(x) ((*x) = OSSwapLittleToHostInt32((*x)))
 #define le64_to_cpus(x) ((*x) = OSSwapLittleToHostInt64((*x)))
 
-#define container_of(ptr, type, member) ({                                     \
-/*const*/ typeof( ((type *)0)->member ) *__mptr = (ptr);                       \
-(type *)( (char *)__mptr - offsetof(type,member) );})
 
 
 //#define BITS_PER_LONG           LONG_BIT
@@ -269,7 +280,7 @@ void
 _OSWriteInt8(
              volatile void               * base,
              uintptr_t                     byteOffset,
-             uint16_t                      data
+             uint8_t                      data
              )
 {
     *(volatile uint8_t *)((uintptr_t)base + byteOffset) = data;
@@ -290,6 +301,14 @@ _OSWriteInt8((base), (byteOffset), (data))
 #define OSReadLittleInt8(base, byteOffset) \
 _OSReadInt8((base), (byteOffset))
 
+#define writeb(val, addr)    OSWriteLittleInt8(addr, 0, val)
+#define writew(val, addr)    OSWriteLittleInt16(addr, 0, val)
+#define writel(val, addr)    OSWriteLittleInt32(addr, 0, val)
+#define readb(addr)          OSReadLittleInt8(addr, 0);
+#define readw(addr)          OSReadLittleInt16(addr, 0);
+#define readl(addr)          OSReadLittleInt32(addr, 0);
+
+#if DISABLED_CODE //ammulder: doesn't seem to be the correct parameters
 #define writew(hw, reg, val16)     OSWriteLittleInt16((hw->hw_addr), (reg), (val16))
 #define writel(hw, reg, val32)     OSWriteLittleInt32((hw->hw_addr), (reg), (val32))
 
@@ -317,6 +336,7 @@ OSWriteLittleInt16((hw->flash_address), (reg), (val))
 
 #define  __ew32flash(hw, reg, val) \
 OSWriteLittleInt32((hw->flash_address), (reg), (val))
+#endif
 
 /******************************************************************************/
 #pragma mark -
@@ -324,7 +344,7 @@ OSWriteLittleInt32((hw->flash_address), (reg), (val))
 #pragma mark -
 /******************************************************************************/
 
-#define spinlock_t  IOSimpleLock *
+//#define spinlock_t  IOSimpleLock *
 typedef struct {
     int counter;
 } atomic_t;
@@ -332,14 +352,14 @@ typedef struct {
     long counter;
 } atomic64_t;
 
-#define spin_lock_init(slock)                           \
-do                                                      \
-{                                                       \
-if (*slock == NULL)                                   \
-{                                                     \
-*(slock) = IOSimpleLockAlloc();                     \
-}                                                     \
-} while (0)
+//#define spin_lock_init(slock)                           \
+//do                                                      \
+//{                                                       \
+//if (*slock == NULL)                                   \
+//{                                                     \
+//*(slock) = IOSimpleLockAlloc();                     \
+//}                                                     \
+//} while (0)
 
 //#define spin_lock(lock)
 //
@@ -375,10 +395,6 @@ enum
 
 #define irqreturn_t int
 
-
-#define __always_unused
-
-#define DISABLED_CODE 0
 
 struct pci_dev {
     UInt16 vendor;

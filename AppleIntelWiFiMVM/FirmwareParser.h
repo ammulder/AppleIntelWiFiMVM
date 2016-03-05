@@ -13,10 +13,7 @@
 #include <IOKit/IOService.h>
 extern "C" {
 #include "iwl-config.h"
-#include "iwl-agn-hw.h"
-#include "iwl-fw.h"
 #include "iwl-drv.h"
-#include "iwl-debug.h"
 }
 
 class FirmwareParser : public OSObject {

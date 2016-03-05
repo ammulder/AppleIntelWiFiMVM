@@ -22,7 +22,7 @@ void AppleIntelWiFiMVM::firmwareLoadComplete( OSKextRequestTag requestTag, OSRet
     DEBUGLOG("%s Callback complete\n", MYNAME);
 }
 
-OSData* AppleIntelWiFiMVM::loadFirmwareSync(struct iwl_drv *drv, const struct iwl_cfg *device) {
+OSData* AppleIntelWiFiMVM::loadFirmwareSync(struct iwl_drv *drv) {
     DEBUGLOG("%s Loading firmware\n", MYNAME);
     const char *name_pre = drv->cfg->fw_name_pre;
     char tag[8];
@@ -71,51 +71,13 @@ OSData* AppleIntelWiFiMVM::loadFirmwareSync(struct iwl_drv *drv, const struct iw
     return progress.firmwareData;
 }
 
-bool AppleIntelWiFiMVM::startFirmware(const struct iwl_cfg *device, struct iwl_trans *trans) {
-//    struct iwl_drv *drv;
-//    int ret;
-    
-    driver = (struct iwl_drv*)IOMalloc(sizeof(*driver));
-    if (!driver) {
-        return false;
-    }
-    
-    driver->trans = trans;
-//    drv->dev = trans->dev;
-    driver->cfg = device;
-    
-//    init_completion(&drv->request_firmware_complete);
-//    INIT_LIST_HEAD(&drv->list);
-    
-//#ifdef CONFIG_IWLWIFI_DEBUGFS
-//    /* Create the device debugfs entries. */
-//    drv->dbgfs_drv = debugfs_create_dir(dev_name(trans->dev),
-//                                        iwl_dbgfs_root);
-//    
-//    if (!drv->dbgfs_drv) {
-//        IWL_ERR(drv, "failed to create debugfs directory\n");
-//        ret = -ENOMEM;
-//        goto err_free_drv;
-//    }
-//    
-//    /* Create transport layer debugfs dir */
-//    drv->trans->dbgfs_dir = debugfs_create_dir("trans", drv->dbgfs_drv);
-//    
-//    if (!drv->trans->dbgfs_dir) {
-//        IWL_ERR(drv, "failed to create transport debugfs directory\n");
-//        ret = -ENOMEM;
-//        goto err_free_dbgfs;
-//    }
-//#endif
+bool AppleIntelWiFiMVM::startupLoadFirmware() {
     IOLog("%s Attempting to load Firmware...\n", MYNAME);
 
-    OSData *fwData = loadFirmwareSync(driver, device);
-    if(!fwData) {
-        IOFree(driver, sizeof(*driver));
-        driver = NULL;
+    OSData *fwData = loadFirmwareSync(driver);
+    if(!fwData)
         return false;
-    }
-    
+
     parser = new FirmwareParser();
     IOLog("%s Attempting to parse Firmware...\n", MYNAME);
     bool result = parser->processFirmwareData(fwData, driver);
@@ -141,7 +103,7 @@ bool AppleIntelWiFiMVM::startFirmware(const struct iwl_cfg *device, struct iwl_t
 //    return NULL;
 }
 
-void AppleIntelWiFiMVM::stopFirmware() {
+void AppleIntelWiFiMVM::shutdownStopFirmware() {
     if(!driver) return;
     //    wait_for_completion(&drv->request_firmware_complete);
     IOLockLock(firmwareLoadLock);
@@ -172,8 +134,5 @@ void AppleIntelWiFiMVM::stopFirmware() {
 //#ifdef CONFIG_IWLWIFI_DEBUGFS
 //    debugfs_remove_recursive(drv->dbgfs_drv);
 //#endif
-    
-    IOFree(driver, sizeof(*driver));
-    driver = NULL;
 }
 

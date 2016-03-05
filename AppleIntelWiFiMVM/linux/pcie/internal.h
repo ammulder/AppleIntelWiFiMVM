@@ -30,13 +30,15 @@
 #ifndef __iwl_trans_int_pcie_h__
 #define __iwl_trans_int_pcie_h__
 
+#if DISABLED_CODE
 #include <linux/spinlock.h>
 #include <linux/interrupt.h>
 #include <linux/skbuff.h>
 #include <linux/wait.h>
 #include <linux/pci.h>
 #include <linux/timer.h>
-
+#endif
+#include "linux-porting.h"
 #include "iwl-fh.h"
 #include "iwl-csr.h"
 #include "iwl-trans.h"
@@ -319,10 +321,10 @@ struct iwl_trans_pcie {
 	struct iwl_rb_allocator rba;
 	struct iwl_trans *trans;
 	struct iwl_drv *drv;
-
+#if DISABLED_CODE // TODO: need to revisit later
 	struct net_device napi_dev;
 	struct napi_struct napi;
-
+#endif
 	/* INT ICT Table */
 	__le32 *ict_tbl;
 	dma_addr_t ict_tbl_dma;
@@ -332,7 +334,7 @@ struct iwl_trans_pcie {
 	struct isr_statistics isr_stats;
 
 	spinlock_t irq_lock;
-	struct mutex mutex;
+	IOLock *mutex;
 	u32 inta_mask;
 	u32 scd_base_addr;
 	struct iwl_dma_ptr scd_bc_tbls;
@@ -384,7 +386,7 @@ struct iwl_trans_pcie {
 static inline struct iwl_trans *
 iwl_trans_pcie_get_trans(struct iwl_trans_pcie *trans_pcie)
 {
-	return container_of((void *)trans_pcie, struct iwl_trans,
+	return container_of2((void *)trans_pcie, struct iwl_trans,
 			    trans_specific);
 }
 

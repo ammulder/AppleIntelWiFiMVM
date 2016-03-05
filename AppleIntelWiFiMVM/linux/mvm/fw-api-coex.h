@@ -65,8 +65,11 @@
 #ifndef __fw_api_bt_coex_h__
 #define __fw_api_bt_coex_h__
 
+#if DISABLED_CODE
 #include <linux/types.h>
 #include <linux/bitops.h>
+#endif
+#include "linux-porting.h"
 
 #define BITS(nb) (BIT(nb) - 1)
 

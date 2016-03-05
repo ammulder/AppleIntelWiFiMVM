@@ -1,9 +1,11 @@
 #include "AppleIntelWiFiMVM.h"
+
 extern "C" {
 //#include "linux/linux-porting.h"
 #include "device-list.h"
 #include "iwl-csr.h"
 #include "iwl-trans.h"
+#include "internal.h"
 }
 
 #define super IOService
@@ -34,6 +36,9 @@ bool AppleIntelWiFiMVM::init(OSDictionary *dict) {
 }
 
 bool AppleIntelWiFiMVM::start(IOService* provider) {
+    struct iwl_trans *pcieTransport;
+    const struct iwl_cfg *card;
+
     DEBUGLOG("%s::start\n", MYNAME);
     if(!super::start(provider)) {
         IOLog("%s Super start failed\n", MYNAME);
@@ -44,63 +49,82 @@ bool AppleIntelWiFiMVM::start(IOService* provider) {
     pciDevice = OSDynamicCast(IOPCIDevice, provider);
     if(!pciDevice) {
         IOLog("%s Provider not a PCIDevice\n", MYNAME);
-        return false;
+        goto failBeforePCIe;
     }
     pciDevice->retain();
 
-    const struct iwl_cfg *card = identifyWiFiCard();
+    // Startup Process: 1
+    card = startupIdentifyWiFiCard();
     if(!card) {
         IOLog("%s Unable to find or configure WiFi hardware.\n", MYNAME);
-        return false;
+        goto failBeforePCIe;
     }
     IOLog("%s loading for device %s\n", MYNAME, card->name);
-    
-    // Create locks for synchronization
+
+    // Startup Process: 2
+    pcieTransport = startupCreatePCIeTransport(card);
+    if(!pcieTransport) {
+        IOLog("%s Unable to initialize PCIe transport.\n", MYNAME);
+        goto failBeforePCIe;
+    }
+
+    // Startup Process: 3
+    if(!startupCreateDriver(card, pcieTransport)) {
+        IOLog("%s Unable to initialize driver.\n", MYNAME);
+        goto failAfterPCIe;
+    }
+
+    // Create locks for synchronization TODO: move me
     firmwareLoadLock = IOLockAlloc();
     if (!firmwareLoadLock) {
         IOLog("%s Unable to allocate firmware load lock\n", MYNAME);
-        return false;
+        goto failAfterDriver;
     }
-    
-    IOLog("%s Starting Firmware...\n", MYNAME);
-    if(!startFirmware(card, NULL)) {// TODO: PCI transport
-        IOLog("%s Unable to start firmware\n", MYNAME);
-        return false;
+
+    // Startup Process: 4
+    if(!startupLoadFirmware()) {
+        IOLog("%s Unable to load firmware.\n", MYNAME);
+        goto failAfterDriver;
     }
-    
-    pciDevice->setMemoryEnable(true);
+
+//    pciDevice->setMemoryEnable(true);
     registerService();
 
     return true;
+
+failAfterDriver:
+    shutdownFreeDriver();
+failAfterPCIe:
+    shutdownFreePCIeTransport(pcieTransport);
+failBeforePCIe:
+    return false;
 }
 
 void AppleIntelWiFiMVM::stop(IOService* provider) {
     DEBUGLOG("%s::stop\n", MYNAME);
-    if(driver) stopFirmware();
+    shutdownStopFirmware();
     if (firmwareLoadLock)
     {
         IOLockFree(firmwareLoadLock);
         firmwareLoadLock = NULL;
     }
+    struct iwl_trans *trans = shutdownFreeDriver();
+    shutdownFreePCIeTransport(trans);
+
     super::stop(provider);
 }
 
 void AppleIntelWiFiMVM::free() {
     DEBUGLOG("%s::free\n", MYNAME);
     RELEASE(pciDevice);
-    if(driver) {
-        IOFree(driver, sizeof(*driver));
-        driver = NULL;
-    }
+    struct iwl_trans *trans = shutdownFreeDriver();
+    shutdownFreePCIeTransport(trans);
     super::free();
 }
 
-const struct iwl_cfg *AppleIntelWiFiMVM::identifyWiFiCard() {
+const struct iwl_cfg *AppleIntelWiFiMVM::startupIdentifyWiFiCard() {
     UInt32 i;
     const struct iwl_cfg *result = NULL;
-    const struct iwl_cfg *cfg_7265d __maybe_unused = NULL;
-    struct iwl_trans *iwl_trans;
-    struct iwl_trans_pcie *trans_pcie;
 
     UInt16 vendor = pciDevice->configRead16(kIOPCIConfigVendorID);
     UInt16 device = pciDevice->configRead16(kIOPCIConfigDeviceID);
@@ -134,8 +158,15 @@ const struct iwl_cfg *AppleIntelWiFiMVM::identifyWiFiCard() {
 
 //    DEBUGLOG("%s Vendor %#06x Device %#06x SubVendor %#06x SubDevice %#06x Revision %#04x\n", MYNAME, vendor, device, subsystem_vendor, subsystem_device, revision);
 
+    // Investigation: memory regions
+    pciDevice->setMemoryEnable(true);
+    IOLog("%s LISTING %u PCI MEMORY REGION(S):\n", MYNAME, pciDevice->getDeviceMemoryCount());
+    for (i = 0; i < pciDevice->getDeviceMemoryCount(); i++) {
+        IODeviceMemory* memoryDesc = pciDevice->getDeviceMemoryWithIndex(i);
+        if (!memoryDesc) continue;
+        IOLog("%s %u: length=%llu bytes\n", MYNAME, i, memoryDesc->getLength());
+    }
 
-    // STEP 1: find the configuration data based on the PCI IDs
     for(i=0; i<sizeof(iwl_hw_card_ids) / sizeof(pci_device_id); i++) {
         if(iwl_hw_card_ids[i].device == device && iwl_hw_card_ids[i].subdevice == subsystem_device) {
             result = (iwl_cfg *) iwl_hw_card_ids[i].driver_data;
@@ -148,10 +179,20 @@ const struct iwl_cfg *AppleIntelWiFiMVM::identifyWiFiCard() {
         return NULL;
     }
 
-    // STEP 2: configure the PCIe Transport
+    return result;
+}
 
+struct iwl_trans *allocatePCIeTransport(const struct iwl_cfg *cfg);
 
-    // STEP 3: double-check the configuration data based on the hardware revision in the PCIe Transport
+struct iwl_trans *AppleIntelWiFiMVM::startupCreatePCIeTransport(const struct iwl_cfg *cfg) {
+    const struct iwl_cfg *cfg_7265d __maybe_unused = NULL;
+    struct iwl_trans *iwl_trans;
+
+    // STEP 1: configure the PCIe Transport
+    iwl_trans = allocatePCIeTransport(cfg);
+    if(!iwl_trans) return NULL;
+
+    // STEP 2: double-check the configuration data based on the hardware revision in the PCIe Transport
     /*
      * special-case 7265D, it has the same PCI IDs.
      *
@@ -159,37 +200,38 @@ const struct iwl_cfg *AppleIntelWiFiMVM::identifyWiFiCard() {
      * all the parameters that the transport uses must, until that is
      * changed, be identical to the ones in the 7265D configuration.
      */
-    if (result == &iwl7265_2ac_cfg)
+    if (cfg == &iwl7265_2ac_cfg)
         cfg_7265d = &iwl7265d_2ac_cfg;
-    else if (result == &iwl7265_2n_cfg)
+    else if (cfg == &iwl7265_2n_cfg)
         cfg_7265d = &iwl7265d_2n_cfg;
-    else if (result == &iwl7265_n_cfg)
+    else if (cfg == &iwl7265_n_cfg)
         cfg_7265d = &iwl7265d_n_cfg;
     if (cfg_7265d &&
             (iwl_trans->hw_rev & CSR_HW_REV_TYPE_MSK) == CSR_HW_REV_TYPE_7265D) {
-        result = cfg_7265d;
         iwl_trans->cfg = cfg_7265d;
     }
 
-    return result;
+    return iwl_trans;
 }
 
-struct iwl_trans *AppleIntelWiFiMVM::allocatePCIeTransport(const struct iwl_cfg *cfg) {
+
+struct iwl_trans *allocatePCIeTransport(const struct iwl_cfg *cfg) {
+    // From pcie/trans.c iwl_pcie_trans_alloc
     struct iwl_trans_pcie *trans_pcie = NULL;
     struct iwl_trans *trans = NULL;
     u16 pci_cmd;
     int ret;
-#if DISABLED_CODE
     trans = iwl_trans_alloc(sizeof(struct iwl_trans_pcie),
-            &pdev->dev, cfg, &trans_ops_pcie, 0);
+            NULL, cfg, NULL, 0);  // TODO: passing "device" of NULL, "ops" of NULL vs &trans_ops_pcie
     if (!trans)
-        return ERR_PTR(-ENOMEM);
+        return (struct iwl_trans *) ERR_PTR(-ENOMEM);
 
     trans->max_skb_frags = IWL_PCIE_MAX_FRAGS;
 
     trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
 
     trans_pcie->trans = trans;
+#if DISABLED_CODE
     spin_lock_init(&trans_pcie->irq_lock);
     spin_lock_init(&trans_pcie->reg_lock);
     spin_lock_init(&trans_pcie->ref_lock);
@@ -347,4 +389,79 @@ struct iwl_trans *AppleIntelWiFiMVM::allocatePCIeTransport(const struct iwl_cfg 
     iwl_trans_free(trans);
     return ERR_PTR(ret);
 #endif // DISABLED_CODE
+}
+
+bool AppleIntelWiFiMVM::startupCreateDriver(const struct iwl_cfg *cfg, struct iwl_trans *trans) {
+    driver = (struct iwl_drv*)IOMalloc(sizeof(*driver));
+    if (!driver) {
+        return false;
+    }
+
+    driver->trans = trans;
+    if(trans)
+        driver->dev = trans->dev;
+    driver->cfg = cfg;
+
+#if DISABLED_CODE // TODO: need to initialize the request_firmware_complete
+    init_completion(&drv->request_firmware_complete);
+    INIT_LIST_HEAD(&drv->list);
+#endif
+
+#ifdef CONFIG_IWLWIFI_DEBUGFS
+    /* Create the device debugfs entries. */
+    drv->dbgfs_drv = debugfs_create_dir(dev_name(trans->dev),
+                                        iwl_dbgfs_root);
+
+    if (!drv->dbgfs_drv) {
+        IWL_ERR(drv, "failed to create debugfs directory\n");
+        ret = -ENOMEM;
+        goto err_free_drv;
+    }
+
+    /* Create transport layer debugfs dir */
+    drv->trans->dbgfs_dir = debugfs_create_dir("trans", drv->dbgfs_drv);
+
+    if (!drv->trans->dbgfs_dir) {
+        IWL_ERR(drv, "failed to create transport debugfs directory\n");
+        ret = -ENOMEM;
+        goto err_free_dbgfs;
+    }
+#endif
+
+    return true;
+}
+
+struct iwl_trans *AppleIntelWiFiMVM::shutdownFreeDriver() {
+    if(!driver) return NULL;
+    struct iwl_trans *trans = driver->trans;
+    IOFree(driver, sizeof(*driver));
+    driver = NULL;
+    return trans;
+}
+
+void AppleIntelWiFiMVM::shutdownFreePCIeTransport(struct iwl_trans *trans) {
+    if(!trans) return;
+    // From pcie/trans.c iwl_trans_pcie_free
+    struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+
+#if DISABLED_CODE // TODO: later
+    synchronize_irq(trans_pcie->pci_dev->irq);
+
+    iwl_pcie_tx_free(trans);
+    iwl_pcie_rx_free(trans);
+
+    free_irq(trans_pcie->pci_dev->irq, trans);
+    iwl_pcie_free_ict(trans);
+
+    pci_disable_msi(trans_pcie->pci_dev);
+    iounmap(trans_pcie->hw_base);
+    pci_release_regions(trans_pcie->pci_dev);
+    pci_disable_device(trans_pcie->pci_dev);
+
+    if (trans_pcie->napi.poll)
+        netif_napi_del(&trans_pcie->napi);
+
+    iwl_pcie_free_fw_monitor(trans);
+#endif
+    iwl_trans_free(trans);
 }

@@ -29,7 +29,9 @@
 #ifndef __iwl_io_h__
 #define __iwl_io_h__
 
+#if DISABLED_CODE
 #include "iwl-devtrace.h"
+#endif
 #include "iwl-trans.h"
 
 void iwl_write8(struct iwl_trans *trans, u32 ofs, u8 val);
