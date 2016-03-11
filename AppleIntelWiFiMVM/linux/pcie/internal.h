@@ -386,7 +386,7 @@ struct iwl_trans_pcie {
 static inline struct iwl_trans *
 iwl_trans_pcie_get_trans(struct iwl_trans_pcie *trans_pcie)
 {
-	return container_of2((void *)trans_pcie, struct iwl_trans,
+	return container_of((void *)trans_pcie, struct iwl_trans,
 			    trans_specific);
 }
 

@@ -61,11 +61,16 @@ static inline void might_sleep() {} // Used for debugging to barf if called in i
 #define spin_lock(x)    OSSpinLockLock(x)
 #define spin_unlock(x)  OSSpinLockUnlock(x)
 
-#define container_of(ptr, type, member) ({                                 \
+// The exact Linux container_of doesn't work for me:
+#define container_of_from_linux(ptr, type, member) ({                                 \
 /*const*/ typeof( ((type *)0)->member) *__mptr = (ptr);                    \
 (type *)( (char *)__mptr - offsetof(type,member) );})
-#define container_of2(ptr, type, member) ({                                \
-(type *)( (char *)(ptr) - offsetof(type,member) );})
+// I first thought to simplify to this, but ended up going with the other one below
+//#define container_of2(ptr, type, member) ({                                \
+//(type *)( (char *)(ptr) - offsetof(type,member) );})
+// From https://en.wikipedia.org/wiki/Offsetof
+#define container_of(ptr, type, member) ({                                         \
+(type *)((char *)(1 ? (ptr) : &((type *)0)->member) - offsetof(type, member));})
 
 #define wait_queue_head_t  IOLock *
 
